@@ -13,9 +13,45 @@ let unsubscribe = null;
 let currentPortfolioId = null;
 let detailsUnsubscribe = null;
 let perfChart = null;
+const langBtn = document.getElementById('lang-toggle');
+
+// Toggle Language Logic
+if (langBtn) {
+    langBtn.addEventListener('click', () => {
+        const newLang = currentLang === 'ar' ? 'en' : 'ar';
+        localStorage.setItem('appLang', newLang);
+        location.reload(); // Simple reload to apply
+    });
+}
 
 // --- التهيئة ---
 applyLanguage(currentLang);
+
+// Ensure Ticker starts independent of Auth (for testing/immediacy)
+// setTimeout(() => fetchMarketData(), 2000); 
+// Better: keep it in auth for data integrity, but lets make sure it runs.
+
+// --- تهيئة PWA ---
+let deferredPrompt;
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(() => console.log('SW Registered'));
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('install-btn');
+    if (btn) {
+        btn.classList.remove('hidden');
+        btn.addEventListener('click', async () => {
+            btn.classList.add('hidden');
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('Install prompt choice:', outcome);
+            deferredPrompt = null;
+        });
+    }
+});
 
 // --- المصادقة (Auth) ---
 onAuthStateChanged(auth, (user) => {
@@ -183,6 +219,7 @@ async function fetchMarketData() {
     // 2. Commodities (Simulated for Demo)
     const commodities = {
         't-gold': { base: 2650, var: 5, decimal: 1 },
+        't-al': { base: 2260, var: 15, decimal: 0 }, // Aluminum added
         't-silver': { base: 31.50, var: 0.1, decimal: 2 },
         't-oil': { base: 78.40, var: 0.5, decimal: 2 },
         't-gas': { base: 2.80, var: 0.05, decimal: 3 }
@@ -238,13 +275,16 @@ function renderPortfolioCard(id, data, container) {
         </div>
     `;
     card.addEventListener('click', (e) => {
-        if (!e.target.closest('.delete-btn')) openPortfolioDetails(id, data);
+        // Use window.openPortfolioDetails explicitly to avoid scope issues
+        if (!e.target.closest('.delete-btn') && window.openPortfolioDetails) {
+            window.openPortfolioDetails(id, data);
+        }
     });
     container.appendChild(card);
 }
 
 // --- التفاصيل (Details) ---
-window.openPortfolioDetails = (id, data) => {
+window.openPortfolioDetails = function (id, data) {
     currentPortfolioId = id;
     currentPortfolioData = data; // Cache for edit & chart
     window.currentPortfolioCurrency = data.currency || 'USD';

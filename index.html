@@ -12,6 +12,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 
 <body>
@@ -25,10 +26,12 @@
     <!-- Ticker moved to bottom via CSS, simplified HTML here -->
     <div class="ticker-wrap">
         <div class="ticker">
-            <div class="ticker-item"><i class="fa-solid fa-dollar-sign t-icon usd"></i> USD <span class="t-val"
-                    id="t-usd">--</span></div>
             <div class="ticker-item"><i class="fa-solid fa-coins t-icon gold"></i> Gold <span class="t-val"
                     id="t-gold">--</span></div>
+            <div class="ticker-item"><i class="fa-solid fa-industry t-icon silver"></i> Aluminum (LME) <span
+                    class="t-val" id="t-al">--</span></div>
+            <div class="ticker-item"><i class="fa-solid fa-dollar-sign t-icon usd"></i> USD <span class="t-val"
+                    id="t-usd">--</span></div>
             <div class="ticker-item"><i class="fa-solid fa-ring t-icon silver"></i> Silver <span class="t-val"
                     id="t-silver">--</span></div>
             <div class="ticker-item"><i class="fa-solid fa-droplet t-icon oil"></i> Oil <span class="t-val"
@@ -46,6 +49,9 @@
             </div>
 
             <div class="nav-actions">
+                <button id="install-btn" class="nav-btn success-btn hidden" title="تثبيت التطبيق">
+                    <i class="fa-solid fa-download"></i> تثبيت
+                </button>
                 <button id="privacy-toggle" class="nav-btn" title="وضع الخصوصية">
                     <i class="fa-solid fa-eye-slash"></i>
                 </button>
@@ -53,7 +59,7 @@
                     <i class="fa-solid fa-house"></i>
                     <span class="mobile-hide">الرئيسية</span>
                 </button>
-                <button id="lang-toggle" class="nav-btn">🇺🇸 EN</button>
+                <button id="lang-toggle" class="nav-btn lang-btn-compact" title="تغيير اللغة">🌐</button>
                 <button id="logout-btn" class="nav-btn danger-btn"><i class="fa-solid fa-power-off"></i></button>
             </div>
         </div>

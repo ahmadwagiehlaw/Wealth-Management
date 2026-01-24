@@ -862,20 +862,29 @@ body {
 /* === 1. NEW HEADER DESIGN (Apple Style) === */
 .glass-header {
     position: fixed;
-    top: 34px;
-    /* Pushed down by ticker */
+    top: 0;
     left: 0;
     width: 100%;
     height: var(--header-height);
-    background: rgba(15, 23, 42, 0.7);
-    /* لون داكن مع شفافية */
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(15, 23, 42, 0.98);
+    /* Almost solid to hide scroll */
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 1000;
     display: flex;
     align-items: center;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.lang-btn-compact {
+    padding: 8px !important;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
 }
 
 /* Reduced Card Height for Mobile */
