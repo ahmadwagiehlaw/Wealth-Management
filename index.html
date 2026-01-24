@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumina | إدارة المحافظ الاستثمارية</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <button id="lang-toggle" class="lang-btn">🇺🇸 English</button>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <section id="auth-section" class="container center-screen">
+        <div class="glass-panel auth-card fade-in">
+            <h1 class="logo">Lumina <span class="accent">.</span></h1>
+            <p class="subtitle" data-i18n="subtitle">إدارة ثروات احترافية</p>
+
+            <form id="login-form">
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="login-email" data-placeholder="emailPlaceholder" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="login-password" data-placeholder="passwordPlaceholder" placeholder="كلمة المرور" required>
+                </div>
+                <button type="submit" class="btn-primary" data-i18n="loginBtn">تسجيل الدخول الآمن</button>
+                <p class="switch-text">
+                    <span data-i18n="newHere">جديد هنا؟</span> 
+                    <span id="show-register" class="link" data-i18n="createAccount">أنشئ حساباً</span>
+                </p>
+            </form>
+
+            <form id="register-form" class="hidden">
+                <div class="input-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="reg-email" data-placeholder="emailPlaceholder" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="reg-password" data-placeholder="choosePassword" placeholder="اختر كلمة مرور" required>
+                </div>
+                <button type="submit" class="btn-primary" data-i18n="registerBtn">إنشاء المحفظة</button>
+                <p class="switch-text">
+                    <span data-i18n="isMember">لديك حساب؟</span> 
+                    <span id="show-login" class="link" data-i18n="loginNow">دخول الآن</span>
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <section id="dashboard-section" class="container hidden fade-in">
+        <header class="glass-panel header">
+            <div class="logo-small">Lumina<span class="accent">.</span></div>
+            <div class="user-controls">
+                <span id="user-email">user@example.com</span>
+                <button id="logout-btn" class="btn-icon"><i class="fa-solid fa-power-off"></i></button>
+            </div>
+        </header>
+
+        <div class="glass-panel net-worth-card">
+            <h3 data-i18n="totalNetWorth">إجمالي القيمة الصافية</h3>
+            <h1 id="total-net-worth">$0.00</h1>
+            <div class="indicator">
+                <i class="fa-solid fa-chart-line"></i> <span data-i18n="realTimeVal">تقييم فوري</span>
+            </div>
+        </div>
+
+        <div class="portfolio-header">
+            <h2 data-i18n="yourPortfolios">محافظك الاستثمارية</h2>
+            <button id="open-modal-btn" class="btn-secondary">
+                <i class="fa-solid fa-plus"></i> <span data-i18n="newPortfolio">محفظة جديدة</span>
+            </button>
+        </div>
+
+        <div id="portfolio-grid" class="grid-layout">
+            <div class="loading-state" data-i18n="loading">جاري تحميل الأصول...</div>
+        </div>
+    </section>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="glass-panel modal fade-in-up">
+            <div class="modal-header">
+                <h3 data-i18n="createAsset">إنشاء أصل جديد</h3>
+                <button id="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="create-portfolio-form">
+                <div class="input-group">
+                    <label data-i18n="portfolioName">اسم المحفظة</label>
+                    <input type="text" id="p-name" data-placeholder="namePlaceholder" placeholder="مثال: أسهم تكنولوجية" required>
+                </div>
+                <div class="input-group">
+                    <label data-i18n="initialCapital">رأس المال المبدئي ($)</label>
+                    <input type="number" id="p-capital" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+                <button type="submit" class="btn-primary" data-i18n="initPortfolio">بدء المحفظة</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="translations.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
