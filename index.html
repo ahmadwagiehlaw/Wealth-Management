@@ -1,117 +1,243 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumina | إدارة المحافظ الاستثمارية</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Wealth | Premium</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Inter:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
+    <div class="ambient-light one"></div>
+    <div class="ambient-light two"></div>
 
-    <button id="lang-toggle" class="lang-btn">🇺🇸 English</button>
+   <nav class="glass-header hidden" id="main-nav">
+    <div class="container nav-content">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fa-solid fa-gem"></i></div>
+            <span class="logo-text">My Wealth</span>
+        </div>
 
-    <div id="toast" class="toast hidden"></div>
+        <div class="nav-actions">
+            <button id="home-btn" class="nav-btn active">
+                <i class="fa-solid fa-house"></i>
+                <span class="mobile-hide">الرئيسية</span>
+            </button>
+            <button id="lang-toggle" class="nav-btn">🇺🇸 EN</button>
+            <button id="logout-btn" class="nav-btn danger-btn"><i class="fa-solid fa-power-off"></i></button>
+        </div>
+    </div>
+</nav>
 
-    <section id="auth-section" class="container center-screen">
-        <div class="glass-panel auth-card fade-in">
-            <h1 class="logo">Lumina <span class="accent">.</span></h1>
-            <p class="subtitle" data-i18n="subtitle">إدارة ثروات احترافية</p>
+    <div id="toast" class="toast hidden">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-msg">تمت العملية بنجاح</span>
+    </div>
 
+    <section id="auth-section" class="container full-height flex-center">
+        <div class="glass-card auth-box fade-in">
+            <div class="auth-header">
+                <h1>مرحباً بك</h1>
+                <p>إدارة ثرواتك بذكاء وأمان</p>
+            </div>
             <form id="login-form">
-                <div class="input-group">
+                <div class="input-wrapper">
                     <i class="fa-solid fa-envelope"></i>
-                    <input type="email" id="login-email" data-placeholder="emailPlaceholder" placeholder="البريد الإلكتروني" required>
+                    <input type="email" id="login-email" placeholder="البريد الإلكتروني" required>
                 </div>
-                <div class="input-group">
+                <div class="input-wrapper">
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="login-password" data-placeholder="passwordPlaceholder" placeholder="كلمة المرور" required>
+                    <input type="password" id="login-password" placeholder="كلمة المرور" required>
                 </div>
-                <button type="submit" class="btn-primary" data-i18n="loginBtn">تسجيل الدخول الآمن</button>
-                <p class="switch-text">
-                    <span data-i18n="newHere">جديد هنا؟</span> 
-                    <span id="show-register" class="link" data-i18n="createAccount">أنشئ حساباً</span>
-                </p>
+                <button type="submit" class="btn-main glow-effect">دخول آمن</button>
+                <div class="auth-switch">
+                    <span>جديد هنا؟</span> <a id="show-register" class="link">إنشاء حساب</a>
+                </div>
             </form>
-
             <form id="register-form" class="hidden">
-                <div class="input-group">
+                <div class="input-wrapper">
                     <i class="fa-solid fa-envelope"></i>
-                    <input type="email" id="reg-email" data-placeholder="emailPlaceholder" placeholder="البريد الإلكتروني" required>
+                    <input type="email" id="reg-email" placeholder="البريد الإلكتروني" required>
                 </div>
-                <div class="input-group">
+                <div class="input-wrapper">
                     <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="reg-password" data-placeholder="choosePassword" placeholder="اختر كلمة مرور" required>
+                    <input type="password" id="reg-password" placeholder="كلمة المرور" required>
                 </div>
-                <button type="submit" class="btn-primary" data-i18n="registerBtn">إنشاء المحفظة</button>
-                <p class="switch-text">
-                    <span data-i18n="isMember">لديك حساب؟</span> 
-                    <span id="show-login" class="link" data-i18n="loginNow">دخول الآن</span>
-                </p>
+                <button type="submit" class="btn-main glow-effect">بدء الرحلة</button>
+                <div class="auth-switch">
+                    <span>لديك حساب؟</span> <a id="show-login" class="link">دخول</a>
+                </div>
             </form>
         </div>
     </section>
 
-    <section id="dashboard-section" class="container hidden fade-in">
-        <header class="glass-panel header">
-            <div class="logo-small">Lumina<span class="accent">.</span></div>
-            <div class="user-controls">
-                <span id="user-email">user@example.com</span>
-                <button id="logout-btn" class="btn-icon"><i class="fa-solid fa-power-off"></i></button>
+    <section id="dashboard-section" class="container page-content hidden fade-in">
+        <div class="glass-card hero-card">
+            <div class="hero-content">
+                <span class="label">إجمالي الثروة</span>
+                <h1 id="total-net-worth">$0.00</h1>
+                <div class="hero-footer">
+                    <span class="badge success"><i class="fa-solid fa-arrow-trend-up"></i> محدث الآن</span>
+                </div>
             </div>
+            <div class="hero-decoration"><i class="fa-solid fa-wallet"></i></div>
+        </div>
+
+        <div class="action-bar">
+    <h2>محافظك</h2>
+    <button id="open-modal-btn" class="btn-action"> <i class="fa-solid fa-plus"></i> <span>إضافة</span>
+    </button>
+</div>
+
+        <div id="portfolio-grid" class="cards-grid"></div>
+    </section>
+
+    <section id="details-section" class="container page-content hidden fade-in">
+        <header class="details-header">
+            <button id="back-btn" class="btn-icon"><i class="fa-solid fa-arrow-right"></i></button>
+            <h2 id="details-title">اسم المحفظة</h2>
         </header>
 
-        <div class="glass-panel net-worth-card">
-            <h3 data-i18n="totalNetWorth">إجمالي القيمة الصافية</h3>
-            <h1 id="total-net-worth">$0.00</h1>
-            <div class="indicator">
-                <i class="fa-solid fa-chart-line"></i> <span data-i18n="realTimeVal">تقييم فوري</span>
+        <div class="glass-card summary-card">
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-label">الكاش المتوفر</span>
+                    <span class="stat-value" id="d-cash">$0.00</span>
+                </div>
+                <div class="stat-separator"></div>
+                <div class="stat-item">
+                    <span class="stat-label">صافي المستثمر</span>
+                    <span class="stat-value" id="d-invested">$0.00</span>
+                </div>
+                <div class="stat-separator"></div>
+                <div class="stat-item">
+                    <span class="stat-label">الأرباح</span>
+                    <span class="stat-value" id="d-pnl">$0.00</span>
+                </div>
+            </div>
+
+            <div class="goal-wrapper">
+                <div class="goal-info"><span>الهدف المالي</span><span id="goal-text">0%</span></div>
+                <div class="progress-track">
+                    <div id="goal-bar" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <button class="action-pill success" onclick="openCashModal('DEPOSIT')">
+                    <i class="fa-solid fa-arrow-down"></i> إيداع كاش
+                </button>
+                <button class="action-pill danger" onclick="openCashModal('WITHDRAW')">
+                    <i class="fa-solid fa-arrow-up"></i> سحب كاش
+                </button>
             </div>
         </div>
 
-        <div class="portfolio-header">
-            <h2 data-i18n="yourPortfolios">محافظك الاستثمارية</h2>
-            <button id="open-modal-btn" class="btn-secondary">
-                <i class="fa-solid fa-plus"></i> <span data-i18n="newPortfolio">محفظة جديدة</span>
+       <div class="glass-card chart-card">
+    <div class="card-header chart-header"> <h3>الأداء</h3>
+        <div class="header-tools">
+            <button id="show-history-btn" class="btn-ghost">
+                <i class="fa-solid fa-list-ul"></i> السجل
+            </button>
+            <button id="record-val-btn" class="btn-ghost">
+                <i class="fa-solid fa-pen-to-square"></i> تحديث
             </button>
         </div>
+    </div>
+    <div class="chart-wrapper">
+        <canvas id="performanceChart"></canvas>
+    </div>
+</div>
 
-        <div id="portfolio-grid" class="grid-layout">
-            <div class="loading-state" data-i18n="loading">جاري تحميل الأصول...</div>
+        <div class="assets-section">
+            <div class="section-head">
+                <h3>الأصول المملوكة</h3>
+                <button id="add-asset-btn" class="btn-small"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <div id="assets-list" class="assets-list-container"></div>
         </div>
     </section>
 
     <div id="modal-overlay" class="modal-overlay hidden">
-        <div class="glass-panel modal fade-in-up">
-            <div class="modal-header">
-                <h3 data-i18n="createAsset">إنشاء أصل جديد</h3>
-                <button id="close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+        <div class="glass-card modal-box scale-up">
+            <button class="close-modal-abs close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+
+            <div id="modal-content-create" class="modal-content hidden">
+                <h3>إضافة محفظة</h3>
+                <form id="create-portfolio-form">
+                    <div class="input-wrapper"><label>الاسم</label><input type="text" id="p-name" required></div>
+                    <div class="input-wrapper"><label>رأس المال ($)</label><input type="number" id="p-capital"
+                            step="0.01" min="0" required></div>
+                    <div class="input-wrapper"><label>الهدف ($)</label><input type="number" id="p-target" step="0.01"
+                            min="0"></div>
+                    <button type="submit" class="btn-main">إنشاء</button>
+                </form>
             </div>
-            <form id="create-portfolio-form">
-                <div class="input-group">
-                    <label data-i18n="portfolioName">اسم المحفظة</label>
-                    <input type="text" id="p-name" data-placeholder="namePlaceholder" placeholder="مثال: أسهم تكنولوجية" required>
+
+            <div id="modal-content-cash" class="modal-content hidden">
+                <h3 id="cash-modal-title">معاملة مالية</h3>
+                <form id="cash-form">
+                    <input type="hidden" id="cash-type">
+                    <div class="input-wrapper"><label>المبلغ ($)</label><input type="number" id="c-amount" step="0.01"
+                            min="0" required></div>
+                    <div class="input-wrapper"><label>ملاحظة</label><input type="text" id="c-note"></div>
+                    <button type="submit" class="btn-main">تأكيد</button>
+                </form>
+            </div>
+
+            <div id="modal-content-record" class="modal-content hidden">
+                <h3>تحديث القيمة</h3>
+                <form id="record-value-form">
+                    <div class="input-wrapper"><label>التاريخ</label><input type="date" id="h-date" required></div>
+                    <div class="input-wrapper"><label>القيمة الحالية ($)</label><input type="number" id="h-value"
+                            step="0.01" required></div>
+                    <button type="submit" class="btn-main">حفظ</button>
+                </form>
+            </div>
+
+            <div id="modal-content-asset" class="modal-content hidden">
+                <h3>إضافة أصل</h3>
+                <form id="create-asset-form">
+                    <div class="input-wrapper"><label>النوع</label>
+                        <select id="a-category" required>
+                            <option value="STOCKS">أسهم</option>
+                            <option value="CRYPTO">كريبتو</option>
+                            <option value="GOLD">ذهب</option>
+                            <option value="REAL_ESTATE">عقار</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper"><label>الرمز</label><input type="text" id="a-symbol"
+                            placeholder="AAPL, BTC..." required></div>
+                    <div class="input-wrapper two-col">
+                        <div><label>الكمية</label><input type="number" id="a-qty" step="any" required></div>
+                        <div><label>السعر ($)</label><input type="number" id="a-price" step="any" required></div>
+                    </div>
+                    <button type="submit" class="btn-main">إضافة</button>
+                </form>
+            </div>
+
+            <div id="modal-content-history" class="modal-content hidden">
+                <h3>سجل العمليات</h3>
+                <div id="history-list" class="scrollable-list">
+                    <div class="empty-state">جاري التحميل...</div>
                 </div>
-                <div class="input-group">
-                    <label data-i18n="initialCapital">رأس المال المبدئي ($)</label>
-                    <input type="number" id="p-capital" placeholder="0.00" step="0.01" min="0" required>
-                </div>
-                <button type="submit" class="btn-primary" data-i18n="initPortfolio">بدء المحفظة</button>
-            </form>
+            </div>
+
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="translations.js"></script>
     <script type="module" src="app.js"></script>
 </body>
+
 </html>
