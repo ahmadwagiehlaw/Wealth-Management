@@ -19,23 +19,45 @@
     <div class="ambient-light one"></div>
     <div class="ambient-light two"></div>
 
-   <nav class="glass-header hidden" id="main-nav">
-    <div class="container nav-content">
-        <div class="logo-area">
-            <div class="logo-icon"><i class="fa-solid fa-gem"></i></div>
-            <span class="logo-text">My Wealth</span>
-        </div>
+    <div class="ambient-light one"></div>
+    <div class="ambient-light two"></div>
 
-        <div class="nav-actions">
-            <button id="home-btn" class="nav-btn active">
-                <i class="fa-solid fa-house"></i>
-                <span class="mobile-hide">الرئيسية</span>
-            </button>
-            <button id="lang-toggle" class="nav-btn">🇺🇸 EN</button>
-            <button id="logout-btn" class="nav-btn danger-btn"><i class="fa-solid fa-power-off"></i></button>
+    <!-- Ticker moved to bottom via CSS, simplified HTML here -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            <div class="ticker-item"><i class="fa-solid fa-dollar-sign t-icon usd"></i> USD <span class="t-val"
+                    id="t-usd">--</span></div>
+            <div class="ticker-item"><i class="fa-solid fa-coins t-icon gold"></i> Gold <span class="t-val"
+                    id="t-gold">--</span></div>
+            <div class="ticker-item"><i class="fa-solid fa-ring t-icon silver"></i> Silver <span class="t-val"
+                    id="t-silver">--</span></div>
+            <div class="ticker-item"><i class="fa-solid fa-droplet t-icon oil"></i> Oil <span class="t-val"
+                    id="t-oil">--</span></div>
+            <div class="ticker-item"><i class="fa-solid fa-fire t-icon gas"></i> Gas <span class="t-val"
+                    id="t-gas">--</span></div>
         </div>
     </div>
-</nav>
+
+    <nav class="glass-header hidden" id="main-nav">
+        <div class="container nav-content">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fa-solid fa-gem"></i></div>
+                <span class="logo-text">My Wealth</span>
+            </div>
+
+            <div class="nav-actions">
+                <button id="privacy-toggle" class="nav-btn" title="وضع الخصوصية">
+                    <i class="fa-solid fa-eye-slash"></i>
+                </button>
+                <button id="home-btn" class="nav-btn active">
+                    <i class="fa-solid fa-house"></i>
+                    <span class="mobile-hide">الرئيسية</span>
+                </button>
+                <button id="lang-toggle" class="nav-btn">🇺🇸 EN</button>
+                <button id="logout-btn" class="nav-btn danger-btn"><i class="fa-solid fa-power-off"></i></button>
+            </div>
+        </div>
+    </nav>
 
     <div id="toast" class="toast hidden">
         <i class="fa-solid fa-circle-check"></i>
@@ -84,6 +106,11 @@
             <div class="hero-content">
                 <span class="label">إجمالي الثروة</span>
                 <h1 id="total-net-worth">$0.00</h1>
+                <div id="total-pnl-container"
+                    style="display:flex; align-items:center; gap:10px; font-size:1rem; margin-top:5px;">
+                    <span id="total-pnl-val" style="font-weight:700;">+0.00</span>
+                    <span id="total-pnl-percent" class="badge">0%</span>
+                </div>
                 <div class="hero-footer">
                     <span class="badge success"><i class="fa-solid fa-arrow-trend-up"></i> محدث الآن</span>
                 </div>
@@ -92,10 +119,10 @@
         </div>
 
         <div class="action-bar">
-    <h2>محافظك</h2>
-    <button id="open-modal-btn" class="btn-action"> <i class="fa-solid fa-plus"></i> <span>إضافة</span>
-    </button>
-</div>
+            <h2>محافظك</h2>
+            <button id="open-modal-btn" class="btn-action"> <i class="fa-solid fa-plus"></i> <span>إضافة</span>
+            </button>
+        </div>
 
         <div id="portfolio-grid" class="cards-grid"></div>
     </section>
@@ -103,7 +130,12 @@
     <section id="details-section" class="container page-content hidden fade-in">
         <header class="details-header">
             <button id="back-btn" class="btn-icon"><i class="fa-solid fa-arrow-right"></i></button>
-            <h2 id="details-title">اسم المحفظة</h2>
+            <div style="flex:1; display:flex; align-items:center; gap:10px;">
+                <h2 id="details-title" style="margin:0;">اسم المحفظة</h2>
+                <button id="edit-portfolio-btn" class="btn-icon small text-sec" title="تعديل بيانات المحفظة">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            </div>
         </header>
 
         <div class="glass-card summary-card">
@@ -141,21 +173,22 @@
             </div>
         </div>
 
-       <div class="glass-card chart-card">
-    <div class="card-header chart-header"> <h3>الأداء</h3>
-        <div class="header-tools">
-            <button id="show-history-btn" class="btn-ghost">
-                <i class="fa-solid fa-list-ul"></i> السجل
-            </button>
-            <button id="record-val-btn" class="btn-ghost">
-                <i class="fa-solid fa-pen-to-square"></i> تحديث
-            </button>
+        <div class="glass-card chart-card">
+            <div class="card-header chart-header">
+                <h3>الأداء</h3>
+                <div class="header-tools">
+                    <button id="show-history-btn" class="btn-ghost">
+                        <i class="fa-solid fa-list-ul"></i> السجل
+                    </button>
+                    <button id="record-val-btn" class="btn-ghost">
+                        <i class="fa-solid fa-pen-to-square"></i> تحديث
+                    </button>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="performanceChart"></canvas>
+            </div>
         </div>
-    </div>
-    <div class="chart-wrapper">
-        <canvas id="performanceChart"></canvas>
-    </div>
-</div>
 
         <div class="assets-section">
             <div class="section-head">
@@ -174,11 +207,38 @@
                 <h3>إضافة محفظة</h3>
                 <form id="create-portfolio-form">
                     <div class="input-wrapper"><label>الاسم</label><input type="text" id="p-name" required></div>
-                    <div class="input-wrapper"><label>رأس المال ($)</label><input type="number" id="p-capital"
-                            step="0.01" min="0" required></div>
-                    <div class="input-wrapper"><label>الهدف ($)</label><input type="number" id="p-target" step="0.01"
+                    <div class="input-wrapper">
+                        <label>العملة</label>
+                        <select id="p-currency" required>
+                            <option value="EGP">جنيه مصري (EGP)</option>
+                            <option value="USD">دولار أمريكي (USD)</option>
+                            <option value="SAR">ريال سعودي (SAR)</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper"><label>رأس المال</label><input type="number" id="p-capital" step="0.01"
+                            min="0" required></div>
+                    <div class="input-wrapper"><label>الهدف</label><input type="number" id="p-target" step="0.01"
                             min="0"></div>
                     <button type="submit" class="btn-main">إنشاء</button>
+                </form>
+            </div>
+
+            <div id="modal-content-edit-portfolio" class="modal-content hidden">
+                <h3>تعديل المحفظة</h3>
+                <form id="edit-portfolio-form">
+                    <div class="input-wrapper"><label>الاسم</label><input type="text" id="ep-name" required></div>
+                    <div class="input-wrapper"><label>العملة</label>
+                        <select id="ep-currency" required>
+                            <option value="EGP">EGP</option>
+                            <option value="USD">USD</option>
+                            <option value="SAR">SAR</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper"><label>رأس المال (البداية)</label><input type="number" id="ep-capital"
+                            step="0.01" required></div>
+                    <div class="input-wrapper"><label>الهدف</label><input type="number" id="ep-target" step="0.01">
+                    </div>
+                    <button type="submit" class="btn-main">حفظ التعديلات</button>
                 </form>
             </div>
 
