@@ -3,306 +3,162 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>My Wealth | Premium</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Inter:wght@300;400;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>My Wealth | محفظتي</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body>
+<body data-view="auth">
 
-    <div class="ambient-light one"></div>
-    <div class="ambient-light two"></div>
+    <!-- Ambient Background -->
+    <div class="ambient-glow"></div>
 
-    <div class="ambient-light one"></div>
-    <div class="ambient-light two"></div>
-
-    <!-- Ticker moved to bottom via CSS, simplified HTML here -->
-    <div class="ticker-wrap">
-        <div class="ticker">
-            <div class="ticker-item"><i class="fa-solid fa-coins t-icon gold"></i> Gold <span class="t-val"
-                    id="t-gold">--</span></div>
-            <div class="ticker-item"><i class="fa-solid fa-industry t-icon silver"></i> Aluminum (LME) <span
-                    class="t-val" id="t-al">--</span></div>
-            <div class="ticker-item"><i class="fa-solid fa-dollar-sign t-icon usd"></i> USD <span class="t-val"
-                    id="t-usd">--</span></div>
-            <div class="ticker-item"><i class="fa-solid fa-ring t-icon silver"></i> Silver <span class="t-val"
-                    id="t-silver">--</span></div>
-            <div class="ticker-item"><i class="fa-solid fa-droplet t-icon oil"></i> Oil <span class="t-val"
-                    id="t-oil">--</span></div>
-            <div class="ticker-item"><i class="fa-solid fa-fire t-icon gas"></i> Gas <span class="t-val"
-                    id="t-gas">--</span></div>
+    <!-- Market Ticker (Hidden by default in Auth) -->
+    <div class="market-ticker-wrapper" id="market-ticker">
+        <div class="ticker-content">
+            <div class="t-item"><i class="fa-solid fa-ring text-gold"></i> <span id="t-gold">...</span></div>
+            <div class="t-div"></div>
+            <div class="t-item"><i class="fa-solid fa-dollar-sign text-green"></i> <span id="t-usd">...</span></div>
+            <div class="t-div"></div>
+            <div class="t-item"><i class="fa-solid fa-industry text-gray"></i> <span id="t-al">...</span></div>
         </div>
     </div>
 
-    <nav class="glass-header hidden" id="main-nav">
-        <div class="container nav-content">
-            <div class="logo-area">
-                <div class="logo-icon"><i class="fa-solid fa-gem"></i></div>
-                <span class="logo-text">My Wealth</span>
+    <!-- Auth Section -->
+    <section id="auth-section" class="view-section active">
+        <div class="auth-container">
+            <h1 class="brand-title">محفظتي<span class="text-primary">.</span></h1>
+            <p class="brand-subtitle">إدارة ثرواتك بذكاء</p>
+
+            <form id="auth-form">
+                <div class="input-box">
+                    <input type="email" id="email" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="input-box">
+                    <input type="password" id="password" placeholder="كلمة المرور" required>
+                </div>
+                <button type="submit" class="btn-primary" id="auth-btn">تسجيل الدخول</button>
+            </form>
+            <p class="auth-toggle" id="toggle-auth-mode">ليس لديك حساب؟</p>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard-section" class="view-section hidden">
+        <div class="hero-header">
+            <span class="hero-subtitle">صافي الثروة</span>
+            <h1 id="total-wealth">...</h1>
+            <div class="hero-currency">EGP</div>
+        </div>
+
+        <div class="container">
+            <div class="section-head">
+                <h3>المحافظ</h3>
+                <button class="btn-icon" id="add-portfolio-btn"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <div id="portfolios-grid" class="cards-grid"></div>
+        </div>
+    </section>
+
+    <!-- Details Section -->
+    <section id="details-section" class="view-section hidden">
+        <div class="nav-header">
+            <button class="btn-icon" id="back-home"><i class="fa-solid fa-arrow-right"></i></button>
+            <h3 id="detail-title">...</h3>
+            <button class="btn-icon" id="detail-settings"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+        </div>
+
+        <div class="container">
+            <!-- Hero Card -->
+            <div class="card hero-card">
+                <div class="hc-top">
+                    <span class="hc-label">القيمة الحالية</span>
+                    <h2 id="d-current-val">...</h2>
+                </div>
+                <div class="hc-stats">
+                    <div class="stat">
+                        <span class="lbl">العائد</span>
+                        <strong id="d-pnl">...</strong>
+                    </div>
+                    <div class="stat">
+                        <span class="lbl">رأس المال</span>
+                        <strong id="d-capital">...</strong>
+                    </div>
+                </div>
             </div>
 
-            <div class="nav-actions">
-                <button id="install-btn" class="nav-btn success-btn hidden" title="تثبيت التطبيق">
-                    <i class="fa-solid fa-download"></i> تثبيت
-                </button>
-                <button id="privacy-toggle" class="nav-btn" title="وضع الخصوصية">
-                    <i class="fa-solid fa-eye-slash"></i>
-                </button>
-                <button id="home-btn" class="nav-btn active">
-                    <i class="fa-solid fa-house"></i>
-                    <span class="mobile-hide">الرئيسية</span>
-                </button>
-                <button id="lang-toggle" class="nav-btn lang-btn-compact" title="تغيير اللغة">🌐</button>
-                <button id="logout-btn" class="nav-btn danger-btn"><i class="fa-solid fa-power-off"></i></button>
+            <!-- Chart -->
+            <div class="chart-controls">
+                <span>تحليل النمو</span>
+                <div class="filters">
+                    <button class="f-btn active" data-range="ALL">الكل</button>
+                    <button class="f-btn" data-range="1Y">سنة</button>
+                    <button class="f-btn" data-range="1M">شهر</button>
+                </div>
             </div>
+            <div class="card chart-card">
+                <canvas id="growthChart"></canvas>
+            </div>
+
+            <!-- Benchmarks -->
+            <div class="card benchmark-card">
+                <h4 class="card-title">مقارنة الأداء (ROI)</h4>
+                <div class="bm-rows">
+                    <!-- Portfolio -->
+                    <div class="bm-row">
+                        <div class="bm-info"><i class="fa-solid fa-briefcase text-primary"></i> محفظتي</div>
+                        <div class="bm-track">
+                            <div class="bm-fill bg-primary" id="bm-p-fill" style="width:0%"></div>
+                        </div>
+                        <div class="bm-val" id="bm-p-val">0%</div>
+                    </div>
+                    <!-- Bank -->
+                    <div class="bm-row">
+                        <div class="bm-info"><i class="fa-solid fa-building-columns text-green"></i> البنك</div>
+                        <div class="bm-track">
+                            <div class="bm-fill bg-green" style="width:45%"></div>
+                        </div>
+                        <div class="bm-val">15%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions Row -->
+            <div class="actions-row">
+                <button class="action-btn" id="act-record"><i class="fa-solid fa-pen"></i> تحديث</button>
+                <button class="action-btn" id="act-add"><i class="fa-solid fa-plus"></i> أصل</button>
+                <button class="action-btn" id="act-history"><i class="fa-solid fa-clock"></i> السجل</button>
+            </div>
+
+            <!-- Assets List -->
+            <h3 class="section-title">الأصول</h3>
+            <div id="assets-list" class="assets-list"></div>
         </div>
+    </section>
+
+    <!-- Floating Nav (Dock) -->
+    <nav class="glass-dock" id="main-nav">
+        <button class="nav-item active" id="nav-home"><i class="fa-solid fa-house"></i></button>
+        <button class="nav-item" id="nav-settings"><i class="fa-solid fa-gear"></i></button>
+        <button class="nav-item danger" id="nav-logout"><i class="fa-solid fa-power-off"></i></button>
     </nav>
 
-    <div id="toast" class="toast hidden">
-        <i class="fa-solid fa-circle-check"></i>
-        <span id="toast-msg">تمت العملية بنجاح</span>
-    </div>
-
-    <section id="auth-section" class="container full-height flex-center">
-        <div class="glass-card auth-box fade-in">
-            <div class="auth-header">
-                <h1>مرحباً بك</h1>
-                <p>إدارة ثرواتك بذكاء وأمان</p>
-            </div>
-            <form id="login-form">
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-envelope"></i>
-                    <input type="email" id="login-email" placeholder="البريد الإلكتروني" required>
-                </div>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="login-password" placeholder="كلمة المرور" required>
-                </div>
-                <button type="submit" class="btn-main glow-effect">دخول آمن</button>
-                <div class="auth-switch">
-                    <span>جديد هنا؟</span> <a id="show-register" class="link">إنشاء حساب</a>
-                </div>
-            </form>
-            <form id="register-form" class="hidden">
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-envelope"></i>
-                    <input type="email" id="reg-email" placeholder="البريد الإلكتروني" required>
-                </div>
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-lock"></i>
-                    <input type="password" id="reg-password" placeholder="كلمة المرور" required>
-                </div>
-                <button type="submit" class="btn-main glow-effect">بدء الرحلة</button>
-                <div class="auth-switch">
-                    <span>لديك حساب؟</span> <a id="show-login" class="link">دخول</a>
-                </div>
-            </form>
-        </div>
-    </section>
-
-    <section id="dashboard-section" class="container page-content hidden fade-in">
-        <div class="glass-card hero-card">
-            <div class="hero-content">
-                <span class="label">إجمالي الثروة</span>
-                <h1 id="total-net-worth">$0.00</h1>
-                <div id="total-pnl-container"
-                    style="display:flex; align-items:center; gap:10px; font-size:1rem; margin-top:5px;">
-                    <span id="total-pnl-val" style="font-weight:700;">+0.00</span>
-                    <span id="total-pnl-percent" class="badge">0%</span>
-                </div>
-                <div class="hero-footer">
-                    <span class="badge success"><i class="fa-solid fa-arrow-trend-up"></i> محدث الآن</span>
-                </div>
-            </div>
-            <div class="hero-decoration"><i class="fa-solid fa-wallet"></i></div>
-        </div>
-
-        <div class="action-bar">
-            <h2>محافظك</h2>
-            <button id="open-modal-btn" class="btn-action"> <i class="fa-solid fa-plus"></i> <span>إضافة</span>
-            </button>
-        </div>
-
-        <div id="portfolio-grid" class="cards-grid"></div>
-    </section>
-
-    <section id="details-section" class="container page-content hidden fade-in">
-        <header class="details-header">
-            <button id="back-btn" class="btn-icon"><i class="fa-solid fa-arrow-right"></i></button>
-            <div style="flex:1; display:flex; align-items:center; gap:10px;">
-                <h2 id="details-title" style="margin:0;">اسم المحفظة</h2>
-                <button id="edit-portfolio-btn" class="btn-icon small text-sec" title="تعديل بيانات المحفظة">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
-            </div>
-        </header>
-
-        <div class="glass-card summary-card">
-            <div class="stats-row">
-                <div class="stat-item">
-                    <span class="stat-label">الكاش المتوفر</span>
-                    <span class="stat-value" id="d-cash">$0.00</span>
-                </div>
-                <div class="stat-separator"></div>
-                <div class="stat-item">
-                    <span class="stat-label">صافي المستثمر</span>
-                    <span class="stat-value" id="d-invested">$0.00</span>
-                </div>
-                <div class="stat-separator"></div>
-                <div class="stat-item">
-                    <span class="stat-label">الأرباح</span>
-                    <span class="stat-value" id="d-pnl">$0.00</span>
-                </div>
-            </div>
-
-            <div class="goal-wrapper">
-                <div class="goal-info"><span>الهدف المالي</span><span id="goal-text">0%</span></div>
-                <div class="progress-track">
-                    <div id="goal-bar" class="progress-fill"></div>
-                </div>
-            </div>
-
-            <div class="quick-actions">
-                <button class="action-pill success" onclick="openCashModal('DEPOSIT')">
-                    <i class="fa-solid fa-arrow-down"></i> إيداع كاش
-                </button>
-                <button class="action-pill danger" onclick="openCashModal('WITHDRAW')">
-                    <i class="fa-solid fa-arrow-up"></i> سحب كاش
-                </button>
-            </div>
-        </div>
-
-        <div class="glass-card chart-card">
-            <div class="card-header chart-header">
-                <h3>الأداء</h3>
-                <div class="header-tools">
-                    <button id="show-history-btn" class="btn-ghost">
-                        <i class="fa-solid fa-list-ul"></i> السجل
-                    </button>
-                    <button id="record-val-btn" class="btn-ghost">
-                        <i class="fa-solid fa-pen-to-square"></i> تحديث
-                    </button>
-                </div>
-            </div>
-            <div class="chart-wrapper">
-                <canvas id="performanceChart"></canvas>
-            </div>
-        </div>
-
-        <div class="assets-section">
-            <div class="section-head">
-                <h3>الأصول المملوكة</h3>
-                <button id="add-asset-btn" class="btn-small"><i class="fa-solid fa-plus"></i></button>
-            </div>
-            <div id="assets-list" class="assets-list-container"></div>
-        </div>
-    </section>
-
+    <!-- Modals (Generic) -->
     <div id="modal-overlay" class="modal-overlay hidden">
-        <div class="glass-card modal-box scale-up">
-            <button class="close-modal-abs close-modal-btn"><i class="fa-solid fa-xmark"></i></button>
-
-            <div id="modal-content-create" class="modal-content hidden">
-                <h3>إضافة محفظة</h3>
-                <form id="create-portfolio-form">
-                    <div class="input-wrapper"><label>الاسم</label><input type="text" id="p-name" required></div>
-                    <div class="input-wrapper">
-                        <label>العملة</label>
-                        <select id="p-currency" required>
-                            <option value="EGP">جنيه مصري (EGP)</option>
-                            <option value="USD">دولار أمريكي (USD)</option>
-                            <option value="SAR">ريال سعودي (SAR)</option>
-                        </select>
-                    </div>
-                    <div class="input-wrapper"><label>رأس المال</label><input type="number" id="p-capital" step="0.01"
-                            min="0" required></div>
-                    <div class="input-wrapper"><label>الهدف</label><input type="number" id="p-target" step="0.01"
-                            min="0"></div>
-                    <button type="submit" class="btn-main">إنشاء</button>
-                </form>
-            </div>
-
-            <div id="modal-content-edit-portfolio" class="modal-content hidden">
-                <h3>تعديل المحفظة</h3>
-                <form id="edit-portfolio-form">
-                    <div class="input-wrapper"><label>الاسم</label><input type="text" id="ep-name" required></div>
-                    <div class="input-wrapper"><label>العملة</label>
-                        <select id="ep-currency" required>
-                            <option value="EGP">EGP</option>
-                            <option value="USD">USD</option>
-                            <option value="SAR">SAR</option>
-                        </select>
-                    </div>
-                    <div class="input-wrapper"><label>رأس المال (البداية)</label><input type="number" id="ep-capital"
-                            step="0.01" required></div>
-                    <div class="input-wrapper"><label>الهدف</label><input type="number" id="ep-target" step="0.01">
-                    </div>
-                    <button type="submit" class="btn-main">حفظ التعديلات</button>
-                </form>
-            </div>
-
-            <div id="modal-content-cash" class="modal-content hidden">
-                <h3 id="cash-modal-title">معاملة مالية</h3>
-                <form id="cash-form">
-                    <input type="hidden" id="cash-type">
-                    <div class="input-wrapper"><label>المبلغ ($)</label><input type="number" id="c-amount" step="0.01"
-                            min="0" required></div>
-                    <div class="input-wrapper"><label>ملاحظة</label><input type="text" id="c-note"></div>
-                    <button type="submit" class="btn-main">تأكيد</button>
-                </form>
-            </div>
-
-            <div id="modal-content-record" class="modal-content hidden">
-                <h3>تحديث القيمة</h3>
-                <form id="record-value-form">
-                    <div class="input-wrapper"><label>التاريخ</label><input type="date" id="h-date" required></div>
-                    <div class="input-wrapper"><label>القيمة الحالية ($)</label><input type="number" id="h-value"
-                            step="0.01" required></div>
-                    <button type="submit" class="btn-main">حفظ</button>
-                </form>
-            </div>
-
-            <div id="modal-content-asset" class="modal-content hidden">
-                <h3>إضافة أصل</h3>
-                <form id="create-asset-form">
-                    <div class="input-wrapper"><label>النوع</label>
-                        <select id="a-category" required>
-                            <option value="STOCKS">أسهم</option>
-                            <option value="CRYPTO">كريبتو</option>
-                            <option value="GOLD">ذهب</option>
-                            <option value="REAL_ESTATE">عقار</option>
-                        </select>
-                    </div>
-                    <div class="input-wrapper"><label>الرمز</label><input type="text" id="a-symbol"
-                            placeholder="AAPL, BTC..." required></div>
-                    <div class="input-wrapper two-col">
-                        <div><label>الكمية</label><input type="number" id="a-qty" step="any" required></div>
-                        <div><label>السعر ($)</label><input type="number" id="a-price" step="any" required></div>
-                    </div>
-                    <button type="submit" class="btn-main">إضافة</button>
-                </form>
-            </div>
-
-            <div id="modal-content-history" class="modal-content hidden">
-                <h3>سجل العمليات</h3>
-                <div id="history-list" class="scrollable-list">
-                    <div class="empty-state">جاري التحميل...</div>
-                </div>
-            </div>
-
+        <div class="modal-content" id="modal-box">
+            <!-- Injected by JS -->
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="module" src="firebase-config.js"></script>
-    <script type="module" src="translations.js"></script>
+    <!-- Toast -->
+    <div id="toast" class="toast hidden"></div>
+
     <script type="module" src="app.js"></script>
 </body>
 
