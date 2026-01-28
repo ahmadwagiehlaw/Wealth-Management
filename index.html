@@ -40,6 +40,13 @@
 
     <section id="dashboard-section" class="view-section hidden">
         <div class="container">
+            <!-- Market Ticker (Moved to Top) -->
+            <div class="market-ticker-inline glass-card-nav" id="ticker-bar"
+                style="margin-bottom: 15px; padding: 8px 15px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.8rem; color:#aaa;"> <i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل
+                    بيانات السوق...</span>
+            </div>
+
             <!-- بطاقة الثروة الرئيسية مع Lottie -->
             <div class="glass-card main-wealth-card">
                 <div class="wealth-header">
@@ -65,17 +72,14 @@
                         <span class="ws-label">الأرباح</span>
                     </div>
                     <div class="w-stat">
-                        <i class="fa-solid fa-bullseye"></i>
-                        <span id="global-rr" class="ws-value">--</span>
-                        <span class="ws-label">المخاطرة R/R</span>
+                        <i class="fa-solid fa-percent"></i>
+                        <span id="global-avg-return" class="ws-value">0%</span>
+                        <span class="ws-label">متوسط العائد</span>
                     </div>
                 </div>
             </div> <!-- Close main-wealth-card -->
 
-            <!-- Market Ticker Moved Here -->
-            <div class="market-ticker-inline" id="ticker-bar">
-                <span>جاري التحميل...</span>
-            </div>
+            <!-- Market Ticker Moved Up (Line 76 removed) -->
 
             <div class="section-header">
                 <h3>المحافظ</h3>
@@ -84,7 +88,6 @@
                 </button>
             </div>
 
-            <div id="portfolios-container"></div>
             <div id="portfolios-container"></div>
     </section>
 
@@ -174,119 +177,138 @@
 
                     <!-- ROI Block -->
                     <div class="hero-stat-item">
-                        <div class="stat-icon-box" id="roi-icon-box">
+                        <div class="stat-icon-box">
                             <i class="fa-solid fa-percent"></i>
                         </div>
                         <div class="stat-text-col">
-                            <span class="stat-label-tiny">العائد</span>
+                            <span class="stat-label-tiny">العائد %</span>
                             <span id="d-p-roi" class="stat-number-small">0%</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Background decoration -->
-                <div class="hero-bg-glow"></div>
-            </div>
-
-            <!-- Chart Section -->
-            <div class="glass-card chart-container">
-                <div class="chart-header-row">
-                    <h3 class="card-title">
-                        <i class="fa-solid fa-wave-square" style="color:var(--primary)"></i>
-                        القيمة السوقية
-                    </h3>
-                    <div class="chart-filters">
-                        <button class="filter-btn active" onclick="updateChartFilter('1W')">1W</button>
-                        <button class="filter-btn" onclick="updateChartFilter('1M')">1M</button>
-                        <button class="filter-btn" onclick="updateChartFilter('1Y')">1Y</button>
+                <!-- Secondary Stats Row (Deposits / Withdrawals) -->
+                <div class="hero-stats-row secondary-stats">
+                    <div class="hero-stat-item compact">
+                        <span class="stat-label-tiny">إجمالي الإيداع</span>
+                        <span id="d-p-deposits" class="stat-number-tiny text-green">0</span>
                     </div>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="portfolioChart"></canvas>
+                    <div class="vertical-divider mini"></div>
+                    <div class="hero-stat-item compact">
+                        <span class="stat-label-tiny">الأرباح المسحوبة</span>
+                        <span id="d-p-withdrawals" class="stat-number-tiny text-danger">0</span>
+                    </div>
+                    <div class="vertical-divider mini"></div>
+                    <div class="hero-stat-item compact">
+                        <span class="stat-label-tiny">متوسط العائد</span>
+                        <span id="d-p-avg-return" class="stat-number-tiny text-blue">0%</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Valuation History Section -->
-            <div class="glass-card history-container">
-                <div class="chart-header-row" style="margin-bottom:15px">
-                    <h3 class="card-title">
-                        <i class="fa-solid fa-clock-rotate-left" style="color:var(--primary)"></i>
-                        سجل القيم
-                    </h3>
-                </div>
+            <!-- Background decoration -->
+            <div class="hero-bg-glow"></div>
+        </div>
 
-                <div class="table-responsive">
-                    <table class="modern-table" id="valuation-history-table">
-                        <thead>
-                            <tr>
-                                <th>التاريخ</th>
-                                <th>القيمة</th>
-                                <th>الحالة</th>
-                                <th style="text-align: left;">إجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-list-body">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Empty State Placeholder -->
-                <div id="history-empty-state" class="empty-state hidden">
-                    <i class="fa-solid fa-clipboard-list"></i>
-                    <p>لا يوجد سجلات بعد. ابدأ بتحديث رصيد المحفظة.</p>
+        <!-- Chart Section -->
+        <div class="glass-card chart-container">
+            <div class="chart-header-row">
+                <h3 class="card-title">
+                    <i class="fa-solid fa-wave-square" style="color:var(--primary)"></i>
+                    القيمة السوقية
+                </h3>
+                <div class="chart-filters">
+                    <button class="filter-btn active" onclick="updateChartFilter('1W')">1W</button>
+                    <button class="filter-btn" onclick="updateChartFilter('1M')">1M</button>
+                    <button class="filter-btn" onclick="updateChartFilter('1Y')">1Y</button>
                 </div>
             </div>
+            <div class="chart-wrapper">
+                <canvas id="portfolioChart"></canvas>
+            </div>
+        </div>
 
-            <!-- Update Balance Modal with Cash Flow -->
-            <dialog id="update-balance-modal" class="modal">
-                <div class="modal-content glass-card">
-                    <button onclick="document.getElementById('update-balance-modal').close()"
-                        style="position:absolute; top:20px; left:20px; background:none; border:none; color:#888; font-size:1.2rem; cursor:pointer;">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                    <h3>تحديث رصيد المحفظة</h3>
+        <!-- Valuation History Section -->
+        <div class="glass-card history-container">
+            <div class="chart-header-row" style="margin-bottom:15px">
+                <h3 class="card-title">
+                    <i class="fa-solid fa-clock-rotate-left" style="color:var(--primary)"></i>
+                    سجل القيم
+                </h3>
+            </div>
 
-                    <div class="input-group">
-                        <label>التاريخ</label>
-                        <input type="date" id="ub-date">
+            <div class="table-responsive">
+                <table class="modern-table" id="valuation-history-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>القيمة</th>
+                            <th>الحالة</th>
+                            <th style="text-align: left;">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-list-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State Placeholder -->
+            <div id="history-empty-state" class="empty-state hidden">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <p>لا يوجد سجلات بعد. ابدأ بتحديث رصيد المحفظة.</p>
+            </div>
+        </div>
+
+        <!-- Update Balance Modal with Cash Flow -->
+        <dialog id="update-balance-modal" class="modal">
+            <div class="modal-content glass-card">
+                <button onclick="document.getElementById('update-balance-modal').close()"
+                    style="position:absolute; top:20px; left:20px; background:none; border:none; color:#888; font-size:1.2rem; cursor:pointer;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3>تحديث رصيد المحفظة</h3>
+
+                <div class="input-group">
+                    <label>التاريخ</label>
+                    <input type="date" id="ub-date">
+                </div>
+
+                <div class="input-group">
+                    <label>القيمة السوقية الحالية (Current Value)</label>
+                    <input type="number" id="ub-value" placeholder="القيمة الإجمالية للمحفظة الآن">
+                    <small style="color:#888">أدخل القيمة التي تراها في تطبيق المحفظة الخاص بك الآن.</small>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="input-group">
+                    <label>هل قمت بإيداع أو سحب أموال؟</label>
+                    <div class="currency-selector" style="margin-bottom:10px">
+                        <input type="radio" name="ub-type" value="NONE" id="type-none" checked
+                            onchange="toggleCashFlowInput()">
+                        <label for="type-none" class="radio-label">لا تغيير</label>
+
+                        <input type="radio" name="ub-type" value="DEPOSIT" id="type-dep"
+                            onchange="toggleCashFlowInput()">
+                        <label for="type-dep" class="radio-label">إيداع</label>
+
+                        <input type="radio" name="ub-type" value="WITHDRAW" id="type-with"
+                            onchange="toggleCashFlowInput()">
+                        <label for="type-with" class="radio-label">سحب</label>
                     </div>
 
-                    <div class="input-group">
-                        <label>القيمة السوقية الحالية (Current Value)</label>
-                        <input type="number" id="ub-value" placeholder="القيمة الإجمالية للمحفظة الآن">
-                        <small style="color:#888">أدخل القيمة التي تراها في تطبيق المحفظة الخاص بك الآن.</small>
-                    </div>
-
-                    <div class="section-divider"></div>
-
-                    <div class="input-group">
-                        <label>هل قمت بإيداع أو سحب أموال؟</label>
-                        <div class="currency-selector" style="margin-bottom:10px">
-                            <input type="radio" name="ub-type" value="NONE" id="type-none" checked
-                                onchange="toggleCashFlowInput()">
-                            <label for="type-none" class="radio-label">لا تغيير</label>
-
-                            <input type="radio" name="ub-type" value="DEPOSIT" id="type-dep"
-                                onchange="toggleCashFlowInput()">
-                            <label for="type-dep" class="radio-label">إيداع</label>
-
-                            <input type="radio" name="ub-type" value="WITHDRAW" id="type-with"
-                                onchange="toggleCashFlowInput()">
-                            <label for="type-with" class="radio-label">سحب</label>
-                        </div>
-
-                        <div id="cash-flow-input-container" class="hidden">
-                            <input type="number" id="ub-cash-amount" placeholder="قيمة المبلغ المودع/المسحوب">
-                        </div>
-                    </div>
-
-                    <div class="modal-actions">
-                        <button class="btn-text" onclick="window.closeModal()">إلغاء</button>
-                        <button class="btn-primary" onclick="window.submitBalanceUpdate()">حفظ</button>
+                    <div id="cash-flow-input-container" class="hidden">
+                        <input type="number" id="ub-cash-amount" placeholder="قيمة المبلغ المودع/المسحوب">
                     </div>
                 </div>
-            </dialog>
+
+                <div class="modal-actions">
+                    <button class="btn-text" onclick="window.closeModal()">إلغاء</button>
+                    <button class="btn-primary" onclick="window.submitBalanceUpdate()">حفظ</button>
+                </div>
+            </div>
+        </dialog>
         </div>
     </section>
 

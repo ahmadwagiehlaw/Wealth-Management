@@ -1164,6 +1164,7 @@ body {
     font-family: 'Inter', sans-serif;
     background: linear-gradient(to bottom, #ffffff, #d1d1d6);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     line-height: 1;
     letter-spacing: -1px;
@@ -1303,6 +1304,7 @@ body {
     font-weight: 800;
     background: linear-gradient(135deg, #fff, #aaa);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin: 10px 0;
     font-family: 'Inter', sans-serif;
@@ -1962,4 +1964,144 @@ input[type="date"] {
 .modern-table td:last-child {
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
+}
+
+/* === Performance Badge Repositioning === */
+.portfolio-card {
+    position: relative !important;
+}
+
+.performance-badge {
+    position: absolute !important;
+    top: auto !important;
+    bottom: 15px !important;
+    right: 15px !important;
+    left: auto !important;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 5;
+}
+
+.performance-badge.best {
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffd700;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+
+.performance-badge.worst {
+    background: rgba(255, 69, 58, 0.15);
+    color: #ff453a;
+    border: 1px solid rgba(255, 69, 58, 0.3);
+}
+/* === Market Ticker Modern Styles === */
+.market-ticker-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    background: rgba(44, 44, 46, 0.4) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+    padding: 8px 16px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.ticker-scroll-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+.ticker-scroll-area::-webkit-scrollbar {
+    display: none;
+}
+
+.ticker-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: max-content;
+}
+
+.t-label {
+    font-size: 0.7rem;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.t-val {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+}
+
+.t-val.text-green { color: #30d158; }
+.t-val.text-danger { color: #ff453a; }
+
+.sep {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-ticker-refresh {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.btn-ticker-refresh:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(180deg);
+}
+.btn-ticker-refresh:active {
+    transform: scale(0.9);
+}
+
+/* === Secondary Hero Stats === */
+.hero-stats-row.secondary-stats {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 10px;
+}
+
+.hero-stat-item.compact {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.stat-number-tiny {
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+.text-blue { color: #0a84ff; }
+.vertical-divider.mini {
+    height: 25px;
+    background: rgba(255,255,255,0.05);
 }
