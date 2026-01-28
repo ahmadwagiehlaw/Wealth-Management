@@ -1041,31 +1041,83 @@ window.confirmAction = (p_title, p_msg, p_callback) => {
 // --- HISTORY MANAGEMENT ---
 
 // === SYNC HELPER: Ensure Parent Portfolio Matches Latest History ===
+// === SYNC HELPER: Ensure Parent Portfolio Matches Latest History ===
+// === SYNC HELPER: Ensure Parent Portfolio Matches Latest History ===
 window.syncPortfolioFromHistory = async (pid) => {
     try {
+        console.log("🔄 Syncing Portfolio:", pid);
         const historyRef = collection(db, "users", auth.currentUser.uid, "portfolios", pid, "history");
-        const q = query(historyRef, orderBy("date", "desc"), limit(1));
+        const q = query(historyRef);
         const snap = await getDocs(q);
 
         if (!snap.empty) {
-            const latest = snap.docs[0].data();
+            let docs = snap.docs.map(d => d.data());
+
+            // Robust Date Sorting (Newest First)
+            docs.sort((a, b) => {
+                const dA = a.date && a.date.toDate ? a.date.toDate() : new Date(a.date);
+                const dB = b.date && b.date.toDate ? b.date.toDate() : new Date(b.date);
+                return dB - dA;
+            });
+
+            const latest = docs[0]; // Newest Record
+            const oldest = docs[docs.length - 1]; // Oldest Record (Start)
+
+            // Robust Number Parser
+            const parseVal = (v) => {
+                if (typeof v === 'number') return v;
+                if (!v) return 0;
+                // Remove commas and non-numeric chars except dot and minus
+                const clean = String(v).replace(/[^0-9.-]/g, '');
+                return parseFloat(clean) || 0;
+            };
+
+            // Calculate Total Deposits (Sum of all DEPOSIT flows excluding Start if it's not a flow?)
+            // Actually, we iterate ALL records. If the Oldest was a 'DEPOSIT' flow, it contributes to Capital.
+            // If the Oldest was just an initial balance set (type NONE), it contributes as 'Start Value'.
+            // "Effective Invested Capital" = (Oldest Value) + (Sum of ALL Deposits in history EXCEPT if Oldest was one? No).
+
+            // Standard Logic: 
+            // 1. Base Capital = Oldest Value (Snapshot at t=0).
+            // 2. Add Flows = Sum of all 'DEPOSIT' cashflows occurred AFTER t=0.
+            //    (If Oldest record IS a Deposit, it's the Base. Don't double count).
+
+            let additionalDeposits = 0;
+            // Iterate from Newest down to 2nd Oldest
+            for (let i = 0; i < docs.length - 1; i++) {
+                const d = docs[i];
+                const type = d.type ? String(d.type).toUpperCase() : 'NONE';
+                if (type === 'DEPOSIT') {
+                    additionalDeposits += parseVal(d.cashflow);
+                }
+            }
+
+            const startVal = parseVal(oldest.value);
+            const latestVal = parseVal(latest.value);
+
+            // New Capital = Start Base + Additional Inflows
+            const newInitialCapital = startVal + additionalDeposits;
+
+            console.log(`📊 Sync Calc: Start=${startVal}, AddDeps=${additionalDeposits}, CalcCap=${newInitialCapital}, CurrVal=${latestVal}`);
+
             const pRef = doc(db, "users", auth.currentUser.uid, "portfolios", pid);
 
             await updateDoc(pRef, {
-                currentValue: latest.value,
-                lastUpdated: serverTimestamp() // Optional: Mark when it was verified
+                currentValue: latestVal,
+                initialCapital: newInitialCapital,
+                lastUpdated: serverTimestamp()
             });
-            console.log('✅ Portfolio Parent Doc Synced with Latest History:', latest.value);
+            console.log('✅ Synced Success!');
         } else {
-            // Case: No history left (Deleted all)
+            console.log('⚠️ No history found, resetting.');
             const pRef = doc(db, "users", auth.currentUser.uid, "portfolios", pid);
             await updateDoc(pRef, {
-                currentValue: 0
+                currentValue: 0,
+                initialCapital: 0
             });
-            console.log('⚠️ Portfolio reset to 0 (No History)');
         }
     } catch (e) {
-        console.error("Sync Error:", e);
+        console.error("❌ Sync Error:", e);
     }
 };
 
@@ -1086,6 +1138,46 @@ window.deleteHistoryItem = async (histId) => {
         }
     });
 };
+
+// Restoration of editHistoryItem
+window.editHistoryItem = (histId, currentVal, dateVal, cashflowVal, cashflowType) => {
+    const modal = document.getElementById('edit-history-modal');
+    if (!modal) return;
+
+    document.getElementById('edit-hist-id').value = histId;
+    document.getElementById('edit-hist-value').value = currentVal;
+
+    // Handle date format (if ISO, take first 10 chars)
+    let formattedDate = dateVal;
+    if (dateVal && dateVal.includes('T')) {
+        formattedDate = dateVal.split('T')[0];
+    }
+    document.getElementById('edit-hist-date').value = formattedDate;
+
+    // Reset Cashflow UI and set correct radio
+    const cfTypeClean = (cashflowType === 'DEPOSIT' || cashflowType === 'deposit') ? 'deposit'
+        : (cashflowType === 'WITHDRAW' || cashflowType === 'withdrawal') ? 'withdraw'
+            : 'none';
+
+    document.querySelectorAll('input[name="edit-cashflow-type"]').forEach(r => {
+        if (r.value === cfTypeClean) r.checked = true;
+        else r.checked = false;
+    });
+
+    const cfInput = document.getElementById('edit-hist-cashflow');
+    cfInput.value = (cashflowVal && cashflowVal !== 'undefined') ? cashflowVal : '';
+    cfInput.style.display = (cfTypeClean !== 'none') ? 'block' : 'none';
+
+    modal.showModal();
+};
+
+// Handle Cashflow Type Change in Edit Modal
+document.querySelectorAll('input[name="edit-cashflow-type"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        const input = document.getElementById('edit-hist-cashflow');
+        input.style.display = e.target.value !== 'none' ? 'block' : 'none';
+    });
+});
 
 document.getElementById('save-history-edit-btn')?.addEventListener('click', async () => {
     const histId = document.getElementById('edit-hist-id').value;
@@ -1726,6 +1818,51 @@ window.handleHistoryUpdate = (snap) => {
             const dB = b.date && b.date.toDate ? b.date.toDate() : new Date(b.date);
             return dB - dA;
         });
+
+        // === SYNC PARENT DOC WITH REALITY ===
+        if (window.cachedHistoryData.length > 0) {
+            try {
+                const latest = window.cachedHistoryData[0];
+                const oldest = window.cachedHistoryData[window.cachedHistoryData.length - 1];
+
+                // Robust Parse
+                const pVal = (v) => {
+                    const c = String(v).replace(/[^0-9.-]/g, '');
+                    return parseFloat(c) || 0;
+                };
+
+                // Calc Total Deposits
+                let totalDeposits = 0;
+                for (let i = 0; i < window.cachedHistoryData.length - 1; i++) {
+                    const d = window.cachedHistoryData[i];
+                    if (d.type && String(d.type).toUpperCase() === 'DEPOSIT') {
+                        totalDeposits += pVal(d.cashflow);
+                    }
+                }
+
+                const trueStart = pVal(oldest.value);
+                const trueCapital = trueStart + totalDeposits;
+                const trueCurrent = pVal(latest.value);
+
+                // Check if update needed (Debounce slightly or just check if diff)
+                // We don't have currentPortfolioData handy here to check diff, but updateDoc is cheap enough for single portfolio events.
+                // Or better, check current DOM value? No, unreliable.
+                // Just update. It ensures consistency.
+
+                // Only update if we have a valid ID
+                if (window.currentPortfolioId) {
+                    const pRef = doc(db, "users", auth.currentUser.uid, "portfolios", window.currentPortfolioId);
+                    // Use setDoc with merge or updateDoc
+                    updateDoc(pRef, {
+                        currentValue: trueCurrent,
+                        initialCapital: trueCapital,
+                        lastUpdated: serverTimestamp()
+                    }).catch(err => console.error("AutoSync Failed (Silent):", err));
+                }
+            } catch (err) {
+                console.error("AutoSync Logic Error:", err);
+            }
+        }
     }
 
     // Trigger Filter - Default to 'ALL' to ensure visibility
