@@ -1,14 +1,14 @@
+/* === 1. المتغيرات والتأسيس (Apple Dark Theme) === */
 :root {
-    --bg: #050505;
-    --text: #ffffff;
-    --text-muted: #94a3b8;
-    --primary: #3b82f6;
-    --success: #10b981;
-    --danger: #ef4444;
-    --gold: #f59e0b;
-    --surface: rgba(255, 255, 255, 0.03);
-    --surface-border: rgba(255, 255, 255, 0.08);
-    --glass: rgba(20, 20, 24, 0.9);
+    --bg-color: #000000;
+    --card-bg: rgba(28, 28, 30, 0.65);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --text-primary: #ffffff;
+    --text-secondary: #8e8e93;
+    --primary: #0a84ff;
+    --success: #30d158;
+    --danger: #ff453a;
+    --gold: #ffd60a;
 }
 
 * {
@@ -20,442 +20,591 @@
 body {
     margin: 0;
     padding: 0;
-    background: var(--bg);
-    color: var(--text);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
     font-family: 'Cairo', sans-serif;
-    min-height: 100vh;
-    padding-bottom: 90px;
+    padding-top: calc(env(safe-area-inset-top) + 60px);
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
     overflow-x: hidden;
+    user-select: none;
 }
 
-/* === Ambient Background === */
 .ambient-glow {
     position: fixed;
-    top: -20%;
+    top: -30%;
     left: -20%;
-    width: 80vw;
-    height: 80vw;
-    background: radial-gradient(circle, rgba(59, 130, 246, 0.15), transparent 70%);
+    width: 100vw;
+    height: 100vw;
+    background: radial-gradient(circle, rgba(10, 132, 255, 0.08), transparent 60%);
     z-index: -1;
     pointer-events: none;
 }
 
-/* === View State Logic === */
-/* Hide Global Elements when in Auth Mode */
-body[data-view="auth"] .market-ticker-wrapper,
-body[data-view="auth"] .glass-dock {
-    display: none !important;
-}
-
-/* Utility to hide sections */
-.hidden {
-    display: none !important;
-}
-
-/* === Market Ticker === */
-.market-ticker-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 45px;
-    background: rgba(10, 10, 10, 0.95);
-    border-bottom: 1px solid var(--surface-border);
-    z-index: 50;
+/* === 2. شريط الأسعار === */
+/* === 2. شريط الأسعار (Inline) === */
+.market-ticker-inline {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+}
+
+.market-ticker-inline .ticker-content {
+    justify-content: space-evenly;
+}
+
+.sep {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0 10px;
 }
 
 .ticker-content {
     display: flex;
     align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    max-width: 600px;
+    padding: 0 10px;
+}
+
+.ticker-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+}
+
+.t-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.t-val {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sep {
+    width: 1px;
+    height: 15px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* === 3. الحاويات والكروت === */
+/* === 3. الحاويات والكروت ===*/
+.container {
+    padding: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Grid المحافظ - صفين متجاورين */
+.portfolios-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.portfolio-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 2px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* زر تحديث الرصيد بجوار الرقم */
+/* زر تحديث الرصيد (محدث) */
+.btn-update-balance {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.btn-update-balance:hover {
+    background: var(--primary);
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.btn-update-balance i {
+    font-size: 1rem;
+}
+
+.btn-add-stylish {
+    background: rgba(10, 132, 255, 0.1);
+    color: #0a84ff;
+    border: 1px solid rgba(10, 132, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    backdrop-filter: blur(10px);
+}
+
+.btn-add-stylish:hover {
+    background: #0a84ff;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+    border-color: #0a84ff;
+}
+
+/* Currency Selector in Modal */
+.currency-selector {
+    display: flex;
     gap: 15px;
-    font-family: 'Inter';
-    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+.currency-selector input[type="radio"] {
+    display: none;
+}
+
+.currency-selector .radio-label {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.currency-selector input[type="radio"]:checked+.radio-label {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+}
+
+/* تنسيق العملات في البطاقات */
+.pc-value {
+    font-variant-numeric: tabular-nums;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
 }
 
-.t-div {
-    width: 1px;
-    height: 12px;
-    background: var(--surface-border);
+/* تمييز المحافض الرابحة */
+.portfolio-card.winning {
+    border-color: var(--success);
+    background: linear-gradient(145deg, rgba(48, 209, 88, 0.08) 0%, rgba(48, 209, 88, 0.02) 100%);
 }
 
-.text-gold {
-    color: var(--gold);
+.portfolio-card.winning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--success);
 }
 
-.text-green {
-    color: var(--success);
+/* تمييز المحافض الخاسرة */
+.portfolio-card.losing {
+    border-color: var(--danger);
+    background: linear-gradient(145deg, rgba(255, 69, 58, 0.08) 0%, rgba(255, 69, 58, 0.02) 100%);
 }
 
-.text-gray {
-    color: var(--text-muted);
+.portfolio-card.losing::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--danger);
 }
 
-/* === Auth Section === */
-.auth-container {
-    height: 90vh;
+/* تمييز المحافض المتعادلة */
+.portfolio-card.neutral {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.portfolio-card:active {
+    transform: scale(0.97);
+}
+
+.portfolio-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 5px 20px rgba(10, 132, 255, 0.2);
+}
+
+.pc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.pc-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+    color: var(--text-primary);
+}
+
+.pc-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* === New Stats Row Inside Wealth Card === */
+.wealth-stats-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    align-items: center;
+}
+
+.w-stat {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 30px;
-    text-align: center;
+    justify-content: center;
+    gap: 4px;
+    flex: 1;
+    /* Distribute space evenly */
 }
 
-.brand-title {
-    font-size: 2.5rem;
-    margin-bottom: 5px;
-}
-
-.text-primary {
+.w-stat i {
+    font-size: 1.1rem;
     color: var(--primary);
+    margin-bottom: 2px;
 }
 
-.brand-subtitle {
-    color: var(--text-muted);
-    margin-bottom: 40px;
+.ws-value {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    /* Slightly smaller to fit large numbers */
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
 }
 
-.input-box {
-    margin-bottom: 15px;
-    width: 100%;
-    max-width: 350px;
+.ws-value.success-text {
+    color: var(--success);
+    /* Green for Profit */
 }
 
-input {
-    width: 100%;
-    padding: 18px;
-    background: #0f1012 !important;
-    border: 1px solid var(--surface-border);
-    border-radius: 14px;
-    color: white !important;
-    font-size: 1rem;
-    text-align: right;
-    direction: rtl;
+.ws-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    font-weight: 600;
 }
 
-input:focus {
-    border-color: var(--primary);
+.pc-profit {
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pc-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+/* === 4. النصوص والأزرار === */
+.mc-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.mc-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+    margin: 5px 0 15px;
+}
+
+.mc-stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 10px;
 }
 
 .btn-primary {
     width: 100%;
-    max-width: 350px;
-    padding: 16px;
+    padding: 14px;
     background: var(--primary);
     color: white;
     border: none;
-    border-radius: 14px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.auth-toggle {
-    margin-top: 20px;
-    color: var(--primary);
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-
-/* === Dashboard === */
-.hero-header {
-    text-align: center;
-    padding: 60px 20px 30px;
-}
-
-.hero-subtitle {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-#total-wealth {
-    font-size: 3.5rem;
-    font-weight: 800;
-    font-family: 'Inter';
-    margin: 5px 0;
-    letter-spacing: -1px;
-}
-
-.hero-currency {
-    font-size: 0.8rem;
-    font-weight: 700;
-    opacity: 0.6;
-}
-
-.section-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.cards-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.p-card {
-    background: var(--surface);
-    border: 1px solid var(--surface-border);
-    border-radius: 18px;
-    padding: 16px;
-    min-height: 140px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.p-badge {
-    font-family: 'Inter';
-    font-size: 0.75rem;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 2px 8px;
-    border-radius: 6px;
-    align-self: flex-start;
-}
-
-.p-val {
-    font-family: 'Inter';
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-top: 10px;
-}
-
-.p-name {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-
-/* === Details === */
-.nav-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    z-index: 10;
-    padding-top: 60px;
-    /* Space for ticker */
-}
-
-.btn-icon {
-    background: transparent;
-    border: 1px solid var(--surface-border);
-    color: var(--text);
-    width: 40px;
-    height: 40px;
     border-radius: 12px;
-    font-size: 1.1rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-add-stylish {
+    background: rgba(10, 132, 255, 0.15);
+    color: var(--primary);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
 }
 
-.card {
-    background: var(--surface);
-    border: 1px solid var(--surface-border);
-    border-radius: 20px;
-    padding: 20px;
+input,
+select {
+    width: 100%;
+    background: #1c1c1e;
+    border: 1px solid #333;
+    padding: 14px;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    font-family: 'Cairo';
+}
+
+/* === 5. تصميم الحاسبة الجديد (المضغوط والمنظم) === */
+.segmented-control {
+    display: flex;
+    background: rgba(118, 118, 128, 0.24);
+    padding: 2px;
+    border-radius: 9px;
     margin-bottom: 20px;
 }
 
-.hero-card {
-    text-align: center;
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(0, 0, 0, 0.8));
-}
-
-.hc-label {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-}
-
-.hc-top h2 {
-    font-size: 2.5rem;
-    margin: 5px 0 20px;
-    font-family: 'Inter';
-}
-
-.hc-stats {
-    display: flex;
-    justify-content: space-around;
-    border-top: 1px solid var(--surface-border);
-    padding-top: 15px;
-}
-
-.stat {
-    display: flex;
-    flex-direction: column;
+.seg-btn {
+    flex: 1;
+    padding: 6px;
     font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
-.stat strong {
-    font-size: 1.1rem;
-    margin-top: 4px;
-    font-family: 'Inter';
+.seg-btn.active {
+    background: #636366;
+    color: white;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
-/* Chart Controls */
+.calc-tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.calc-tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.compact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.compact-input {
+    padding: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+}
+
+.calc-result-box {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid var(--glass-border);
+    margin-top: 15px;
+}
+
+/* === Cashflow Options === */
+.cashflow-options {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+    background: rgba(255, 255, 255, 0.05);
+    /* subtle background */
+    padding: 5px;
+    border-radius: 12px;
+}
+
+.radio-label {
+    flex: 1;
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+}
+
+.radio-label input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.radio-label span {
+    display: block;
+    padding: 10px;
+    background: transparent;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #888;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.radio-label input[type="radio"]:checked+span {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 10px rgba(10, 132, 255, 0.3);
+}
+
+.radio-label:hover span {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* === 6. الجورنال والنافبار === */
 .chart-controls {
+    background: #1c1c1e;
+    padding: 4px;
+    border-radius: 10px;
+    margin: 15px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-    padding: 0 5px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
 }
 
 .filters {
     display: flex;
-    gap: 5px;
-    background: var(--surface-border);
+    gap: 4px;
+    background: #000;
     padding: 3px;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .f-btn {
     background: transparent;
     border: none;
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    border-radius: 7px;
+    color: #666;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 600;
     cursor: pointer;
+    font-size: 0.8rem;
 }
 
 .f-btn.active {
-    background: rgba(255, 255, 255, 0.1);
+    background: #333;
     color: white;
-    font-weight: 700;
 }
 
-.chart-card {
-    padding: 10px;
-}
-
-/* Benchmarks */
-.card-title {
-    margin: 0 0 15px;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-
-.bm-row {
-    display: grid;
-    grid-template-columns: 80px 1fr 40px;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 12px;
-}
-
-.bm-info {
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.bm-track {
-    height: 6px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.bm-fill {
-    height: 100%;
-    border-radius: 10px;
-}
-
-.bm-val {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-align: end;
-    font-family: 'Inter';
-}
-
-.bg-primary {
-    background: var(--primary);
-}
-
-.bg-green {
-    background: var(--success);
-}
-
-/* Actions */
-.actions-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 30px;
-}
-
-.action-btn {
-    background: var(--surface);
-    border: 1px solid var(--surface-border);
-    color: var(--text);
-    padding: 15px;
-    border-radius: 14px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.8rem;
-    cursor: pointer;
-}
-
-/* Assets */
-.asset-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    background: var(--surface);
-    border-radius: 14px;
-    margin-bottom: 10px;
-}
-
-.ai-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    margin-left: 10px;
-}
-
-.ai-val {
-    font-family: 'Inter';
-    font-weight: 700;
-    text-align: end;
-}
-
-/* Dock */
 .glass-dock {
     position: fixed;
-    bottom: 30px;
+    bottom: calc(20px + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
-    width: 200px;
-    height: 65px;
-    background: rgba(20, 20, 20, 0.9);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--surface-border);
-    border-radius: 40px;
+    width: 85%;
+    max-width: 360px;
+    height: 60px;
+    background: rgba(30, 30, 30, 0.9);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 35px;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    z-index: 100;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
 }
 
 .nav-item {
@@ -463,49 +612,1354 @@ input:focus {
     border: none;
     color: #666;
     font-size: 1.3rem;
-    transition: 0.2s;
-    cursor: pointer;
+    padding: 10px;
 }
 
 .nav-item.active {
+    color: var(--primary);
+    transform: translateY(-4px);
+}
+
+/* === 7. المودال (Native Dialog) === */
+dialog.modal {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: auto;
+    max-width: 90%;
+    width: 400px;
     color: white;
-    transform: translateY(-3px);
+    overflow: visible;
 }
 
-.nav-item.danger {
-    color: var(--danger);
-}
-
-/* Toast */
-.toast {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #111;
-    border: 1px solid var(--surface-border);
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-size: 0.9rem;
-    z-index: 2000;
-}
-
-/* Modal */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.close-modal-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.close-modal-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.modal-content {
+    background: #1c1c1e;
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     width: 100%;
-    max-width: 500px;
-    background: #111;
-    padding: 30px;
-    border-radius: 25px 25px 0 0;
-    border-top: 1px solid var(--surface-border);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+    border: 2px dashed #333;
+    border-radius: 16px;
+}
+
+.empty-icon {
+    font-size: 2rem;
+    opacity: 0.3;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* === 8. أزرار إضافية ===*/
+.btn-text {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-text:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-text:active {
+    transform: scale(0.95);
+}
+
+.btn-danger {
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+}
+
+.btn-danger:hover {
+    background: rgba(255, 69, 58, 0.1);
+}
+
+.btn-danger:active {
+    transform: scale(0.98);
+}
+
+/* === 9. نظام Toast ===*/
+.toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(28, 28, 30, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 12px 20px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    z-index: 4000;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-width: 90%;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast-success {
+    border: 1px solid var(--success);
+    color: var(--success);
+}
+
+.toast-error {
+    border: 1px solid var(--danger);
+    color: var(--danger);
+}
+
+.toast i {
+    font-size: 1.1rem;
+}
+
+/* === 10. Loading Overlay ===*/
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5000;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Utilities */
+.hidden {
+    display: none !important;
+}
+
+.text-green {
+    color: var(--success);
+}
+
+.text-danger {
+    color: var(--danger);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 4px;
+}
+
+h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* === نظام الأسعار الحية === */
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+}
+
+.market-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem !important;
+    background: rgba(28, 28, 30, 0.75);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+}
+
+.market-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(10, 132, 255, 0.15);
+    border-color: rgba(10, 132, 255, 0.3);
+}
+
+.market-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(10, 132, 255, 0.05));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.market-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.market-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.market-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.market-change {
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.market-change.positive {
+    color: var(--success);
+}
+
+.market-change.negative {
+    color: var(--danger);
+}
+
+/* === نظام Toast للإشعارات === */
+#toast-container {
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 80px);
+    right: 16px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+}
+
+.toast {
+    padding: 0.875rem 1.25rem;
+    border-radius: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast-success {
+    border-color: rgba(48, 209, 88, 0.3);
+    background: linear-gradient(135deg, rgba(48, 209, 88, 0.2), rgba(28, 28, 30, 0.8));
+}
+
+.toast-error {
+    border-color: rgba(255, 69, 58, 0.3);
+    background: linear-gradient(135deg, rgba(255, 69, 58, 0.2), rgba(28, 28, 30, 0.8));
+}
+
+.toast-info {
+    border-color: rgba(10, 132, 255, 0.3);
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(28, 28, 30, 0.8));
+}
+
+/* === Loading Overlay === */
+#loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* === تحسينات الأزرار === */
+.btn-text {
+    background: transparent;
+    color: var(--primary);
+    border: none;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-text:hover {
+    background: rgba(10, 132, 255, 0.1);
+}
+
+.btn-text:active {
+    transform: scale(0.95);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--danger), #d63031);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(255, 69, 58, 0.3);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 69, 58, 0.4);
+}
+
+.btn-danger:active {
+    transform: translateY(0);
+}
+
+/* === Dashboard الجديد === */
+.main-wealth-card {
+    padding: 2rem !important;
+    margin-bottom: 1.5rem;
+}
+
+.wealth-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.wealth-text {
+    flex: 1;
+}
+
+.wealth-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(48, 209, 88, 0.2), rgba(48, 209, 88, 0.05));
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--success);
+    margin-top: 0.75rem;
+}
+
+.wealth-change.negative {
+    background: linear-gradient(135deg, rgba(255, 69, 58, 0.2), rgba(255, 69, 58, 0.05));
+    color: var(--danger);
+}
+
+/* === إجبار الكروت الصغيرة في صف واحد === */
+.mini-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 20px !important;
+}
+
+.mini-stat {
+    padding: 10px !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 5px !important;
+}
+
+.stat-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 0.9rem !important;
+    margin: 0 !important;
+}
+
+.mc-label {
+    font-size: 0.7rem !important;
+    opacity: 0.7;
+}
+
+/* إخفاء شريط الأسعار */
+.market-ticker-wrapper {
+    display: none !important;
+}
+
+body {
+    padding-top: env(safe-area-inset-top) !important;
+    /* إلغاء مساحة الشريط */
+}
+
+/* === New Hero Analytics Card === */
+.hero-analytics-card {
+    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.hero-bg-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(10, 132, 255, 0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero-main-value {
+    z-index: 1;
+    text-align: center;
+}
+
+.currency-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hero-number {
+    font-size: 3rem;
+    font-weight: 800;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to bottom, #ffffff, #d1d1d6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+.hero-stats-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 24px;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    z-index: 1;
+    width: 100%;
+}
+
+.hero-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.stat-text-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label-tiny {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.stat-number-small {
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+}
+
+.vertical-divider {
+    width: 1px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Edit Button */
+.header-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-edit-icon {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-edit-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--primary);
+}
+
+/* Chart Header & Filters */
+.chart-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.chart-filters {
+    display: flex;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.filter-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    color: var(--text-primary);
+}
+
+.filter-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* === تصميم صفحة التفاصيل الجديد === */
+#details-section .container {
+    padding-top: 20px;
+}
+
+.portfolio-header-hero {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.portfolio-total-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 10px 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.portfolio-roi-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: rgba(48, 209, 88, 0.15);
+    color: #30d158;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.portfolio-roi-badge.loss {
+    background: rgba(255, 69, 58, 0.15);
+    color: #ff453a;
+}
+
+/* Line Chart Area */
+.main-chart-card {
+    background: linear-gradient(180deg, rgba(28, 28, 30, 0.8) 0%, rgba(28, 28, 30, 0.4) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 24px;
+    padding: 20px;
+    margin-bottom: 30px;
+    height: 300px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Assets List Modern */
+.asset-item-modern {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(44, 44, 46, 0.6);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 16px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+
+.asset-item-modern:hover {
+    transform: scale(1.01);
+    background: rgba(58, 58, 60, 0.8);
+}
+
+.asset-icon-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-left: 12px;
+}
+
+.asset-info h4 {
+    margin: 0;
+    font-size: 1rem;
+    color: #fff;
+}
+
+.asset-info p {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.asset-val {
+    text-align: left;
+}
+
+.asset-val h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-family: 'Inter';
+}
+
+.asset-val p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+}
+
+/* Action Buttons */
+.fab-add {
+    position: fixed;
+    bottom: 100px;
+    left: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 8px 24px rgba(10, 132, 255, 0.4);
+    border: none;
+    z-index: 100;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.fab-add:active {
+    transform: scale(0.9);
+}
+
+/* Performance Grid */
+.performance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.performer-card {
+    padding: 1.25rem !important;
+    transition: all 0.3s ease;
+}
+
+.performer-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(10, 132, 255, 0.15);
+}
+
+.performer-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.performer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.performer-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.performer-gain,
+.performer-loss {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Performance Badges على بطاقات المحافظ */
+.performance-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    animation: badge-pulse 2s ease-in-out infinite;
+    z-index: 10;
+}
+
+.performance-badge.best {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+.performance-badge.worst {
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(255, 68, 68, 0.5);
+}
+
+@keyframes badge-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+/* Wealth Header Layout to insure Lottie and Text are visible */
+.wealth-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.wealth-text {
+    flex: 1;
+}
+
+/* Portfolio cards need position relative for badges */
+.portfolio-card,
+.pc-header {
+    position: relative;
+}
+
+/* Portfolio Details Page */
+.details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+}
+
+.details-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.btn-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--primary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    background: rgba(10, 132, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.btn-icon.danger {
+    color: var(--danger);
+}
+
+.btn-icon.danger:hover {
+    background: rgba(255, 69, 58, 0.2);
+}
+
+/* Portfolio Stats Grid */
+.portfolio-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.mini-stat-inline {
+    background: linear-gradient(135deg, rgba(28, 28, 30, 0.8), rgba(44, 44, 46, 0.6));
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.stat-big-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Chart Container */
+.chart-container {
+    margin-bottom: 1.5rem;
+}
+
+.chart-wrapper {
+    height: 260px;
+    position: relative;
+    padding: 1rem 0;
+}
+
+.card-title {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+}
+
+/* Section Header Modern */
+.section-header-modern {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header-modern h3 {
+    margin: 0;
+    font-size: 1.125rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-add-modern {
+    background: linear-gradient(135deg, var(--primary), rgba(10, 132, 255, 0.7));
+    color: white;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-add-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(10, 132, 255, 0.4);
+}
+
+
+
+/* --- Journal V2 Styles --- */
+.journal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle {
+    font-size: 0.9rem;
+    color: #888;
+    margin: 5px 0 0;
+}
+
+.btn-add-circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-add-circle:active {
+    transform: scale(0.9);
+}
+
+.journal-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.j-stat-card {
+    background: rgba(28, 28, 30, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.j-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.j-stat-card strong {
+    font-size: 1.2rem;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+}
+
+.journal-filters {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.j-filter {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #aaa;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.j-filter.active {
+    background: #fff;
+    color: #000;
+    font-weight: 600;
+}
+
+/* Timeline */
+.journal-timeline {
+    position: relative;
+    padding-right: 20px;
+    /* For RTL line */
+    border-right: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-right: 20px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    right: -26px;
+    /* Align with border */
+    top: 15px;
+    width: 10px;
+    height: 10px;
+    background: var(--card-bg);
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.timeline-item.win::before {
+    border-color: var(--success);
+}
+
+.timeline-item.loss::before {
+    border-color: var(--danger);
+}
+
+.trade-card {
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.6), rgba(20, 20, 20, 0.8));
+    border-radius: 16px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.trade-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.trade-ticker {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.trade-pnl {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.trade-lesson {
+    font-size: 0.85rem;
+    color: #ccc;
+    line-height: 1.4;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* --- Valuation History Log Table --- */
+.history-container {
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.modern-table th {
+    text-align: right;
+    color: #888;
+    font-weight: 500;
+    padding: 10px 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modern-table td {
+    padding: 12px 5px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    color: #eee;
+}
+
+.badge-text {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #aaa;
+}
+
+.badge-text.success {
+    background: rgba(48, 209, 88, 0.15);
+    color: var(--success);
+}
+
+.badge-text.danger {
+    background: rgba(255, 69, 58, 0.15);
+    color: var(--danger);
+}
+
+/* --- Date Picker Dark Mode Override --- */
+input[type="date"] {
+    background: #1c1c1e;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 12px;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    color-scheme: dark;
+}
+
+/* === Modern Table Styles === */
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: 10px;
+}
+
+.modern-table thead th {
+    text-align: right;
+    padding: 0 15px;
+    color: #888;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding-bottom: 5px;
+}
+
+/* === Badges === */
+.badge-text {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ccc;
+}
+
+.badge-text.success {
+    background: rgba(48, 209, 88, 0.15);
+    color: #30d158;
+}
+
+.badge-text.danger {
+    background: rgba(255, 69, 58, 0.15);
+    color: #ff453a;
+}
+
+.modern-table tbody tr {
+    background: rgba(255, 255, 255, 0.03);
+    transition: transform 0.2s, background 0.2s;
+}
+
+.modern-table tbody tr:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.modern-table td {
+    padding: 10px 12px;
+    vertical-align: middle;
+    font-size: 0.9rem;
+    color: #eee;
+    border: none;
+    white-space: nowrap;
+    /* Prevent wrapping */
+}
+
+/* Date Column */
+.modern-table td:nth-child(1) {
+    font-size: 0.75rem;
+    color: #888;
+    font-family: 'Inter', sans-serif;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Value Column */
+.modern-table td:nth-child(2) {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+}
+
+.modern-table td:last-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
 }
