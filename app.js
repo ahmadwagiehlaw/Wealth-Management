@@ -2499,3 +2499,63 @@ window.switchView = window.setView; // Alias for backward compatibility
 
 // Start at Dashboard
 window.setView('dashboard');
+
+// ==========================================
+//          PWA INSTALLATION LOGIC
+// ==========================================
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+
+    // Check if user has already dismissed it recently (localStorage)
+    const dismissed = localStorage.getItem('pwa_dismissed_ts');
+    const now = Date.now();
+    // Show again after 1 day if dismissed
+    if (!dismissed || (now - parseInt(dismissed) > 86400000)) {
+        setTimeout(() => {
+            const modal = document.getElementById('pwa-install-modal');
+            if (modal) modal.showModal();
+        }, 3000); // Wait 3 seconds after load to be polite
+    }
+
+    // Show Manual Button
+    const manualBtn = document.getElementById('manual-install-trigger');
+    if (manualBtn) manualBtn.style.display = 'block';
+});
+
+const btnInstall = document.getElementById('btn-pwa-install');
+if (btnInstall) {
+    btnInstall.addEventListener('click', async () => {
+        const modal = document.getElementById('pwa-install-modal');
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to the install prompt: ${outcome}`);
+            deferredPrompt = null;
+        } else {
+            // Fallback for when event didn't fire (e.g. iOS or already installed)
+            showToast('اضغط على أيقونة المشاركة ثم "Add to Home Screen" 📲', 'info');
+        }
+        modal.close();
+    });
+}
+
+// Track App Installed
+window.addEventListener('appinstalled', () => {
+    console.log('PWA was installed');
+    localStorage.setItem('pwa_installed', 'true');
+    const modal = document.getElementById('pwa-install-modal');
+    if (modal) modal.close();
+});
+
+// Dismiss Logic
+const btnDismiss = document.querySelector('#pwa-install-modal .btn-text');
+if (btnDismiss) {
+    btnDismiss.addEventListener('click', () => {
+        localStorage.setItem('pwa_dismissed_ts', Date.now().toString());
+    });
+}

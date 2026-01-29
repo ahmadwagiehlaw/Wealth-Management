@@ -11,6 +11,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;700;800&display=swap"
         rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#121212">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
@@ -43,8 +45,15 @@
             <!-- Market Ticker (Moved to Top) -->
             <div class="market-ticker-inline glass-card-nav" id="ticker-bar"
                 style="margin-bottom: 15px; padding: 8px 15px; display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.8rem; color:#aaa;"> <i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل
-                    بيانات السوق...</span>
+                <span style="font-size:0.8rem; color:#aaa;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> جاري تحميل بيانات السوق...
+                </span>
+                <!-- Manual Install Trigger -->
+                <button id="manual-install-trigger" class="icon-btn-sm"
+                    style="background:transparent; color:var(--primary); display:none;"
+                    onclick="document.getElementById('pwa-install-modal').showModal()">
+                    <i class="fa-solid fa-download"></i>
+                </button>
             </div>
 
             <!-- بطاقة الثروة الرئيسية مع Lottie -->
@@ -721,7 +730,38 @@
         </div>
     </dialog>
 
+    <!-- PWA INSTALL MODAL -->
+    <dialog id="pwa-install-modal" class="modal bottom-sheet">
+        <div class="modal-content glass-card pwa-card">
+            <div class="pwa-header">
+                <div class="pwa-icon">
+                    <img src="./assets/icon-192.png" alt="App Icon"
+                        onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                </div>
+                <div class="pwa-text">
+                    <h3>تثبيت التطبيق 📱</h3>
+                    <p>احصل على تجربة أسرع وأفضل بتثبيت التطبيق على جهازك.</p>
+                </div>
+            </div>
+            <div class="pwa-actions">
+                <button id="btn-pwa-install" class="btn-primary w-100">تثبيت الآن</button>
+                <button onclick="document.getElementById('pwa-install-modal').close()" class="btn-text">ليس
+                    الآن</button>
+            </div>
+        </div>
+    </dialog>
+
     <script type="module" src="app.js"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Registered!', reg))
+                    .catch(err => console.log('SW Failed:', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -2789,3 +2789,70 @@ input[type="date"] {
         /* Keep Price/Qty side by side */
     }
 }
+
+/* === PWA INSTALL MODAL === */
+.pwa-card {
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    background: rgba(20, 20, 20, 0.95);
+    max-width: 400px;
+}
+
+.pwa-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.pwa-text h3 {
+    margin: 0 0 5px 0;
+    color: #fff;
+}
+
+.pwa-text p {
+    margin: 0;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.pwa-icon img {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+}
+
+.pwa-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Mobile Bottom Sheet Style */
+@media (max-width: 480px) {
+    dialog.bottom-sheet {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border: none;
+        background: transparent;
+        padding: 0;
+        display: none;
+        /* Controlled by JS showModal */
+    }
+
+    dialog[open].bottom-sheet {
+        display: block;
+        animation: slideInUp 0.3s ease-out;
+    }
+
+    .bottom-sheet .modal-content {
+        border-radius: 20px 20px 0 0;
+        width: 100% !important;
+        margin: 0;
+        border-bottom: none;
+        background: rgba(30, 30, 30, 0.98);
+    }
+}
