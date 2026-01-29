@@ -2705,3 +2705,87 @@ input[type="date"] {
     align-items: center;
     gap: 10px;
 }
+
+/* === ANIMATIONS & POLISH === */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.center-card {
+    animation: slideInUp 0.4s ease-out forwards;
+    margin-bottom: 12px;
+    /* Better separation */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    /* Depth */
+}
+
+/* === MOBILE OPTIMIZATION (iPhone & Small Screens) === */
+@media (max-width: 480px) {
+
+    /* Base Scale */
+    html {
+        font-size: 14px;
+    }
+
+    /* tighter cards */
+    .center-header {
+        padding: 10px 12px;
+    }
+
+    .center-body {
+        padding: 12px;
+    }
+
+    .stock-ticker {
+        font-size: 1rem;
+    }
+
+    .ch-val {
+        font-size: 1rem;
+    }
+
+    /* Adjust Header Button */
+    .ch-right {
+        gap: 10px;
+    }
+
+    .btn-header-add {
+        width: 28px;
+        height: 28px;
+        /* Slightly more compact */
+    }
+
+    /* Execution List Compactness */
+    .exec-row {
+        padding: 10px;
+    }
+
+    .exec-meta span {
+        font-size: 0.65rem !important;
+    }
+
+    /* Modal Adjustments */
+    .modal-content {
+        width: 95% !important;
+        padding: 15px !important;
+        margin: 10px auto;
+    }
+
+    .input-group {
+        grid-template-columns: 1fr;
+        /* Stack inputs */
+    }
+
+    .compact-grid {
+        grid-template-columns: 1fr 1fr;
+        /* Keep Price/Qty side by side */
+    }
+}
