@@ -1,0 +1,424 @@
+/* === 11. Enhanced Trading Tools Styles === */
+
+/* Header */
+.tools-header {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(90deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 5px 0 0;
+}
+
+/* Modern Segmented Control */
+.segmented-control-modern {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 4px;
+    position: relative;
+    gap: 4px;
+}
+
+.sc-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sc-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sc-btn.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--primary);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.sc-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    width: 60%;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 4px 4px 0 0;
+}
+
+.sc-icon {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+
+.sc-label {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+/* Tool Card */
+.tool-card {
+    padding: 25px 20px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Modern Inputs */
+.input-with-icon {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-with-icon i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.modern-input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 12px 12px 40px;
+    /* Space for LTR icon placement if needed, but here RTL */
+    padding-right: 45px;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: 0.3s;
+}
+
+.modern-input:focus {
+    border-color: var(--primary);
+    background: rgba(10, 132, 255, 0.05);
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.1);
+}
+
+.input-with-icon:focus-within i {
+    color: var(--primary);
+}
+
+.input-group-modern {
+    margin-bottom: 15px;
+}
+
+.input-group-modern label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.input-group-modern input {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px;
+    transition: 0.3s;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.input-group-modern input:focus {
+    border-color: var(--primary);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Specific Input Themes */
+.input-group-modern.success-theme input:focus {
+    border-color: var(--success);
+}
+
+.input-group-modern.danger-theme input:focus {
+    border-color: var(--danger);
+}
+
+/* Broker Selector */
+.broker-selector {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.broker-option {
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: 0.2s;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.broker-option.selected {
+    background: rgba(10, 132, 255, 0.15);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.broker-option:hover:not(.selected) {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Result Displays */
+.result-display-card {
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.2));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 15px;
+    position: relative;
+    overflow: hidden;
+}
+
+.result-display-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0.5;
+}
+
+.result-display-card.gold-theme::before {
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.rd-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.rd-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(180deg, #fff, #ddd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Inter';
+}
+
+.rd-sub {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Compact Result */
+.result-display-card.compact {
+    padding: 12px;
+}
+
+.rd-value-sm {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    font-family: 'Inter';
+}
+
+/* Risk Visualizer Bar */
+.risk-visualizer-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rr-bar-wrapper {
+    display: flex;
+    height: 12px;
+    background: #333;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.rr-bar {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.rr-bar.loss {
+    background: var(--danger);
+    width: 0%;
+}
+
+.rr-bar.profit {
+    background: var(--success);
+    width: 0%;
+    margin-right: auto;
+}
+
+/* margin-right auto to push from left in RTL if needed, but flex handles order */
+
+/* RTL Fix for visualizer: Flex direction is Row. 
+   If RTL: loss is right, profit is left? 
+   Logic: Entry is center. 
+   Let's force LTR for the bar to be consistent with math intuition (Left < Right) */
+.rr-bar-wrapper {
+    flex-direction: row;
+    /* Force standard matching graph */
+    direction: ltr;
+    background: #2c2c2e;
+}
+
+.rr-bar-entry {
+    width: 2px;
+    background: #fff;
+    height: 100%;
+    z-index: 2;
+    box-shadow: 0 0 8px #fff;
+}
+
+.rr-bar.loss {
+    background: linear-gradient(90deg, var(--danger), #5a1a1a);
+    justify-content: flex-end;
+    display: flex;
+}
+
+.rr-bar.profit {
+    background: linear-gradient(90deg, #1a4d28, var(--success));
+}
+
+.rr-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-family: 'Inter';
+    font-weight: 600;
+    direction: ltr;
+    /* Match visual bar */
+}
+
+/* Global Stats Grid */
+.global-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.g-stat-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 5px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.g-stat-box.gold-glow {
+    border-color: rgba(255, 214, 10, 0.3);
+    background: radial-gradient(circle, rgba(255, 214, 10, 0.05), transparent);
+}
+
+.g-label {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.g-value {
+    font-size: 0.95rem;
+    font-family: 'Inter';
+    display: block;
+}
+
+/* Empty State Modern */
+.empty-placeholder {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.placeholder-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 1.5rem;
+    color: #555;
+}
+
+/* Action Button */
+.btn-action-glow {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(10, 132, 255, 0.4);
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.btn-action-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(10, 132, 255, 0.5);
+}
+
+.divider-line {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+}
+
+.mini-header {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}

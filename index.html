@@ -325,75 +325,206 @@
 
     <section id="calculator-section" class="view-section hidden">
         <div class="container">
-            <h3 style="margin-bottom:15px">أدوات التداول</h3>
-
-            <div class="glass-card" style="padding:15px">
-                <div class="segmented-control">
-                    <button class="seg-btn active" onclick="window.switchCalcTab('fees', this)">العمولات</button>
-                    <button class="seg-btn" onclick="window.switchCalcTab('avg', this)">المتوسطات</button>
-                    <button class="seg-btn" onclick="window.switchCalcTab('risk', this)">المخاطرة</button>
+            <div class="tools-header">
+                <div>
+                    <h2 class="section-title">أدوات التداول</h2>
+                    <p class="section-subtitle">حاسبات، تحليل، وإدارة مخاطر</p>
                 </div>
-
-                <div id="calc-fees" class="calc-tab-content active">
-                    <div class="radio-group">
-                        <div class="radio-label selected" onclick="window.selectBroker('thndr', this)">Thndr</div>
-                        <div class="radio-label" onclick="window.selectBroker('other', this)">تقليدي</div>
-                    </div>
-                    <div class="compact-grid">
-                        <input type="number" id="c-buy" class="compact-input" placeholder="سعر الشراء"
-                            oninput="window.calcCommission()">
-                        <input type="number" id="c-sell" class="compact-input" placeholder="سعر البيع"
-                            oninput="window.calcCommission()">
-                    </div>
-                    <input type="number" id="c-qty" class="compact-input" placeholder="الكمية"
-                        oninput="window.calcCommission()" style="width:100%">
-
-                    <div class="calc-result-box">
-                        <div class="mc-label">الربح الصافي</div>
-                        <h2 id="c-result" style="margin:5px 0; direction:ltr; font-size:1.8rem">0.00</h2>
-                        <div style="font-size:0.75rem; color:#888">الرسوم: <span id="c-fees">0.00</span></div>
-                    </div>
-                </div>
-
-                <div id="calc-avg" class="calc-tab-content">
-                    <div class="compact-grid">
-                        <input type="number" id="avg-curr-qty" class="compact-input" placeholder="الكمية الحالية">
-                        <input type="number" id="avg-curr-price" class="compact-input" placeholder="المتوسط الحالي">
-                    </div>
-                    <div class="compact-grid">
-                        <input type="number" id="avg-new-qty" class="compact-input" placeholder="كمية جديدة">
-                        <input type="number" id="avg-new-price" class="compact-input" placeholder="سعر جديد">
-                    </div>
-                    <button class="btn-primary" style="background:#222; margin-top:5px; padding:10px"
-                        onclick="window.calcAverage()">احسب</button>
-
-                    <div class="calc-result-box">
-                        <div class="mc-label">المتوسط الجديد</div>
-                        <h2 id="avg-result" style="margin:5px 0; color:var(--gold); font-size:1.8rem">0.00</h2>
-                    </div>
-                </div>
-
-                <div id="calc-risk" class="calc-tab-content">
-                    <input type="number" id="rr-entry" class="compact-input" placeholder="سعر الدخول"
-                        oninput="window.calcRR()" style="width:100%; margin-bottom:10px">
-                    <div class="compact-grid">
-                        <input type="number" id="rr-target" class="compact-input" placeholder="الهدف"
-                            oninput="window.calcRR()">
-                        <input type="number" id="rr-stop" class="compact-input" placeholder="الوقف"
-                            oninput="window.calcRR()">
-                    </div>
-
-                    <div class="calc-result-box">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px">
-                            <div style="font-size:0.8rem">ربح: <span class="text-green" id="rr-profit">0%</span></div>
-                            <div style="font-size:0.8rem">خسارة: <span class="text-danger" id="rr-loss">0%</span></div>
-                        </div>
-                        <div class="mc-label">نسبة العائد (R:R)</div>
-                        <h2 id="rr-ratio" style="margin:5px 0; font-size:1.8rem">0 : 0</h2>
-                    </div>
-                </div>
-
             </div>
+
+            <!-- Modern Segmented Control -->
+            <div class="glass-card compact-card" style="padding: 8px; margin-bottom: 20px;">
+                <div class="segmented-control-modern">
+                    <button class="sc-btn active" onclick="window.switchCalcTab('global', this)">
+                        <span class="sc-icon"><i class="fa-solid fa-globe"></i></span>
+                        <span class="sc-label">شامل</span>
+                    </button>
+                    <button class="sc-btn" onclick="window.switchCalcTab('fees', this)">
+                        <span class="sc-icon"><i class="fa-solid fa-receipt"></i></span>
+                        <span class="sc-label">عمولات</span>
+                    </button>
+                    <button class="sc-btn" onclick="window.switchCalcTab('avg', this)">
+                        <span class="sc-icon"><i class="fa-solid fa-calculator"></i></span>
+                        <span class="sc-label">توسط</span>
+                    </button>
+                    <button class="sc-btn" onclick="window.switchCalcTab('risk', this)">
+                        <span class="sc-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                        <span class="sc-label">مخاطرة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- GLOBAL ANALYZER TAB -->
+            <div id="calc-global" class="calc-tab-content active">
+                <div class="glass-card tool-card">
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="global-search-input" class="modern-input"
+                            placeholder="ابحث عن رمز السهم (مثلاً EGAL)" oninput="window.calcGlobalStats(this.value)">
+                    </div>
+
+                    <div id="global-results" class="hidden-fade-in" style="display:none;">
+                        <div class="global-stats-grid">
+                            <div class="g-stat-box gold-glow">
+                                <span class="g-label">المتوسط الشامل</span>
+                                <strong id="g-avg-price" class="g-value">0.00</strong>
+                            </div>
+                            <div class="g-stat-box">
+                                <span class="g-label">إجمالي الكمية</span>
+                                <strong id="g-total-qty" class="g-value">0</strong>
+                            </div>
+                            <div class="g-stat-box">
+                                <span class="g-label">القيمة السوقية</span>
+                                <strong id="g-mkt-val" class="g-value">0.00</strong>
+                            </div>
+                        </div>
+
+                        <div class="divider-line"></div>
+                        <h4 class="mini-header">التوزيع حسب المحفظة</h4>
+                        <div id="global-breakdown-list" class="breakdown-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <div id="global-empty" class="empty-placeholder">
+                        <div class="placeholder-icon">
+                            <i class="fa-brands fa-searchengin"></i>
+                        </div>
+                        <p>ابدأ الكتابة لعرض تحليل شامل للأصل عبر جميع محافظك</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEES TAB -->
+            <div id="calc-fees" class="calc-tab-content">
+                <div class="glass-card tool-card">
+                    <div class="broker-selector">
+                        <div class="broker-option selected" onclick="window.selectBroker('thndr', this)">
+                            <i class="fa-solid fa-bolt"></i> Thndr
+                        </div>
+                        <div class="broker-option" onclick="window.selectBroker('other', this)">
+                            <i class="fa-solid fa-building-columns"></i> تقليدي
+                        </div>
+                    </div>
+
+                    <div class="compact-grid">
+                        <div class="input-group-modern">
+                            <label>سعر الشراء</label>
+                            <input type="number" id="c-buy" placeholder="0.00" oninput="window.calcCommission()">
+                        </div>
+                        <div class="input-group-modern">
+                            <label>سعر البيع</label>
+                            <input type="number" id="c-sell" placeholder="0.00" oninput="window.calcCommission()">
+                        </div>
+                    </div>
+
+                    <div class="input-group-modern" style="margin-top: 10px;">
+                        <label>الكمية</label>
+                        <input type="number" id="c-qty" placeholder="عدد الأسهم" oninput="window.calcCommission()">
+                    </div>
+
+                    <div class="result-display-card">
+                        <span class="rd-label">الربح الصافي</span>
+                        <h2 id="c-result" class="rd-value">0.00</h2>
+                        <div class="rd-sub">إجمالي الرسوم: <span id="c-fees">0.00</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AVERAGES TAB -->
+            <div id="calc-avg" class="calc-tab-content">
+                <div class="glass-card tool-card">
+                    <h4 class="section-label">المركز الحالي</h4>
+                    <div class="compact-grid">
+                        <div class="input-group-modern">
+                            <label>الكمية</label>
+                            <input type="number" id="avg-curr-qty" placeholder="0">
+                        </div>
+                        <div class="input-group-modern">
+                            <label>المتوسط</label>
+                            <input type="number" id="avg-curr-price" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="connection-line">
+                        <i class="fa-solid fa-plus-circle"></i>
+                    </div>
+
+                    <h4 class="section-label">الشراء الجديد</h4>
+                    <div class="compact-grid">
+                        <div class="input-group-modern">
+                            <label>الكمية</label>
+                            <input type="number" id="avg-new-qty" placeholder="0">
+                        </div>
+                        <div class="input-group-modern">
+                            <label>السعر</label>
+                            <input type="number" id="avg-new-price" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <button class="btn-action-glow" onclick="window.calcAverage()">
+                        احسب المتوسط الجديد
+                    </button>
+
+                    <div class="result-display-card gold-theme" style="margin-top: 20px;">
+                        <span class="rd-label">المتوسط الجديد</span>
+                        <h2 id="avg-result" class="rd-value">0.00</h2>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RISK TAB -->
+            <div id="calc-risk" class="calc-tab-content">
+                <div class="glass-card tool-card">
+                    <div class="input-group-modern">
+                        <label>المبلغ المخاطر به ($) <span class="optional-badge">اختياري</span></label>
+                        <input type="number" id="rr-risk-amount" placeholder="مثلاً 100" oninput="window.calcRR()">
+                    </div>
+
+                    <div class="input-group-modern" style="margin-top: 15px;">
+                        <label>سعر الدخول</label>
+                        <input type="number" id="rr-entry" placeholder="0.00" oninput="window.calcRR()"
+                            class="highlight-input">
+                    </div>
+
+                    <div class="compact-grid" style="margin-top: 15px;">
+                        <div class="input-group-modern success-theme">
+                            <label>الهدف (TP)</label>
+                            <input type="number" id="rr-target" placeholder="0.00" oninput="window.calcRR()">
+                        </div>
+                        <div class="input-group-modern danger-theme">
+                            <label>الوقف (SL)</label>
+                            <input type="number" id="rr-stop" placeholder="0.00" oninput="window.calcRR()">
+                        </div>
+                    </div>
+
+                    <!-- Risk Visualizer -->
+                    <div class="risk-visualizer-container">
+                        <div class="rr-bar-wrapper">
+                            <div id="rr-bar-loss" class="rr-bar loss"></div>
+                            <div class="rr-bar-entry"></div>
+                            <div id="rr-bar-profit" class="rr-bar profit"></div>
+                        </div>
+                        <div class="rr-labels">
+                            <span id="label-loss" class="text-danger">0%</span>
+                            <span class="text-muted">Entry</span>
+                            <span id="label-profit" class="text-green">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="compact-grid" style="margin-top: 15px;">
+                        <div class="result-display-card compact">
+                            <span class="rd-label">R:R Ratio</span>
+                            <h3 id="rr-ratio" class="rd-value-sm">0 : 0</h3>
+                        </div>
+                        <div class="result-display-card compact blue-theme">
+                            <span class="rd-label">الكمية المقترحة</span>
+                            <h3 id="rr-qty" class="rd-value-sm">-</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 

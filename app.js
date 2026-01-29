@@ -192,25 +192,97 @@ window.calcAverage = () => {
 };
 
 // 3. المخاطرة
+// 3. المخاطرة
 window.calcRR = () => {
     const entry = parseFloat(document.getElementById('rr-entry').value) || 0;
     const target = parseFloat(document.getElementById('rr-target').value) || 0;
     const stop = parseFloat(document.getElementById('rr-stop').value) || 0;
+    const riskAmount = parseFloat(document.getElementById('rr-risk-amount').value) || 0;
+
     if (entry === 0) return;
 
     let profitPer = 0, lossPer = 0;
     if (target > 0) profitPer = ((target - entry) / entry) * 100;
     if (stop > 0) lossPer = ((stop - entry) / entry) * 100;
 
-    document.getElementById('rr-profit').textContent = profitPer > 0 ? `+${profitPer.toFixed(2)}%` : '0%';
-    document.getElementById('rr-loss').textContent = lossPer < 0 ? `${lossPer.toFixed(2)}%` : '0%';
+    // Update Text
+    const profitEl = document.getElementById('rr-profit');
+    const lossEl = document.getElementById('rr-loss');
 
+    if (profitEl) profitEl.textContent = profitPer > 0 ? `+${profitPer.toFixed(2)}%` : '0%';
+    if (lossEl) lossEl.textContent = lossPer < 0 ? `${lossPer.toFixed(2)}%` : '0%';
+
+    // R:R Ratio & Logic
+    let ratioVal = 0;
+    const ratioEl = document.getElementById('rr-ratio');
     if (profitPer > 0 && lossPer < 0) {
-        const ratio = Math.abs(profitPer / lossPer).toFixed(1);
-        document.getElementById('rr-ratio').textContent = `1 : ${ratio}`;
-        document.getElementById('rr-ratio').style.color = ratio >= 2 ? 'var(--success)' : 'white';
+        ratioVal = Math.abs(profitPer / lossPer);
+        const ratioDisplay = ratioVal.toFixed(2);
+        ratioEl.textContent = `1 : ${ratioDisplay}`;
+        ratioEl.style.color = ratioVal >= 2 ? 'var(--success)' : (ratioVal >= 1 ? '#fff' : 'var(--danger)');
     } else {
-        document.getElementById('rr-ratio').textContent = "0 : 0";
+        ratioEl.textContent = "0 : 0";
+        ratioEl.style.color = '#fff';
+    }
+
+    // Position Sizing
+    const qtyEl = document.getElementById('rr-qty');
+    if (riskAmount > 0 && stop > 0 && entry > 0) {
+        const riskPerShare = Math.abs(entry - stop);
+        if (riskPerShare > 0) {
+            const suggestedQty = Math.floor(riskAmount / riskPerShare);
+            qtyEl.textContent = suggestedQty.toLocaleString();
+            qtyEl.parentElement.classList.remove('hidden'); // Ensure visible
+        } else {
+            qtyEl.textContent = "-";
+        }
+    } else {
+        qtyEl.textContent = "-";
+    }
+
+    // Visualizer Logic
+    const barProfit = document.getElementById('rr-bar-profit');
+    const barLoss = document.getElementById('rr-bar-loss');
+    const labelProfit = document.getElementById('label-profit');
+    const labelLoss = document.getElementById('label-loss');
+
+    if (barProfit && barLoss) {
+        // Reset
+        barProfit.style.width = '0%';
+        barLoss.style.width = '0%';
+
+        // We want to visualize the Ratio, not purely price distance, but let's stick to price scale
+        // Total Range = (Target - Stop). 
+        // If undefined, use arbitrary defaults for visualization
+
+        if (target > 0 && stop > 0) {
+            // Calculate relative distances
+            const upside = Math.abs(target - entry);
+            const downside = Math.abs(entry - stop);
+            const total = upside + downside;
+
+            // Limit visualization to avoid one side swallowing the other in extreme cases (e.g. 1:50)
+            // But let's try direct proportion first
+            const profitWidth = (upside / total) * 100;
+            const lossWidth = (downside / total) * 100;
+
+            // In our CSS, we have a flex wrapper.
+            // Center is entry. 
+            // We can just set widths relative to a max potential width of "50%" each? 
+            // No, the design is complex. Let's simplify.
+            // Let's assume the bar total width represents the trade range.
+
+            barProfit.style.width = `${profitWidth}%`;
+            barLoss.style.width = `${lossWidth}%`;
+
+            // Update Labels
+            if (labelProfit) labelProfit.textContent = target.toFixed(2);
+            if (labelLoss) labelLoss.textContent = stop.toFixed(2);
+        } else {
+            // Default state if incomplete
+            if (labelProfit) labelProfit.textContent = "TP";
+            if (labelLoss) labelLoss.textContent = "SL";
+        }
     }
 };
 
@@ -2559,3 +2631,293 @@ if (btnDismiss) {
         localStorage.setItem('pwa_dismissed_ts', Date.now().toString());
     });
 }
+// --- GLOBAL ASSET ANALYZER (NEW) ---
+window.calcGlobalStats = async (tickerInput) => {
+    const list = document.getElementById('global-breakdown-list');
+    const resultBox = document.getElementById('global-results');
+    const emptyState = document.getElementById('global-empty');
+
+    if (!tickerInput || tickerInput.length < 2) {
+        resultBox.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+    }
+
+    const ticker = tickerInput.trim().toUpperCase();
+
+    // We already have "window.journalCache" populated with all centers from "loadJournal"
+    // However, "loadJournal" might filter? No, loadJournal fetches ALL and filters locally.
+    // BUT, checks authentication first.
+    if (!window.journalCache || window.journalCache.length === 0) {
+        // Just in case journal isn't loaded yet
+        await window.loadJournal();
+    }
+
+    // 1. Filter OPEN centers for this Ticker
+    const relevantGroups = window.journalCache.filter(c =>
+        c.asset === ticker &&
+        c.stats &&
+        c.stats.totalQty > 0
+    );
+
+    if (relevantGroups.length === 0) {
+        resultBox.style.display = 'none';
+        // Maybe show "No active positions found" message inside input or Toast?
+        // Actually, let's keep empty state but maybe text "No positions for [TICKER]"
+        return;
+    }
+
+    resultBox.style.display = 'block';
+    emptyState.style.display = 'none';
+
+    // 2. Aggregate Data
+    let globalTotalQty = 0;
+    let globalTotalCost = 0;
+    const portfolioBreakdown = {};
+
+    // Need to fetch Portfolio Names since Journal only stores portfolioID on Executions...
+    // Wait, the "journalCache" items (Centers) don't have PortfolioID on the Center doc necessarily.
+    // The Executions have it.
+    // We need to iterate EXECUTIONS of these centers to know where the qty lives.
+
+    // Fetch Portfolios Map for Names
+    const portfoliosMap = {};
+    try {
+        const pSnap = await getDocs(collection(db, 'users', auth.currentUser.uid, 'portfolios'));
+        pSnap.forEach(d => portfoliosMap[d.id] = d.data().name);
+    } catch (e) { }
+
+    relevantGroups.forEach(group => {
+        // A Center might theoretically mix portfolios if user messed up, but let's assume Executions dictate location.
+        // We must sum up Qty per Portfolio based on Executions Types.
+
+        group.executions.forEach(ex => {
+            const pid = ex.portfolioId || 'Unassigned';
+            const pname = portfoliosMap[pid] || (pid === 'Unassigned' ? 'غير محدد' : 'Unknown');
+
+            if (!portfolioBreakdown[pid]) portfolioBreakdown[pid] = { name: pname, qty: 0, cost: 0 };
+
+            const q = parseFloat(ex.qty);
+            const p = parseFloat(ex.price);
+
+            if (ex.type === 'OPEN' || ex.type === 'ADD' || ex.type === 'AVERAGE') {
+                portfolioBreakdown[pid].qty += q;
+                portfolioBreakdown[pid].cost += (q * p);
+
+                globalTotalQty += q;
+                globalTotalCost += (q * p);
+            }
+            else if (ex.type.includes('EXIT') || ex.type.includes('TP') || ex.type.includes('SL')) {
+                // FIFO removal logic ideally, but for weighted average of *current* holding:
+                // We subtract Qty. The "Cost" removed is weighted avg? 
+                // Simple approach: Current Avg = Total Cost / Total Qty (at that moment).
+                // For now, let's assume strict accumulation for Average Price calculation is based on "Remaining Shares".
+                // Actually, "Weighted Average Price" of *current* holdings is:
+                // (Sum of Counts * Prices) / Total Count... Only for active lots.
+                // Complex with FIFO.
+                // Simplified: Just take the `group.stats.avgPrice` (which we calculated in loadJournal) and `group.stats.totalQty`
+            }
+        });
+    });
+
+    // RE-AGGREGATE strategy: Use the pre-calculated Center Stats!
+    // Much safer because `loadJournal` handles the math.
+    // We just need to attribute `totalQty` to a Portfolio.
+    // Problem: A Center can have Executions from Portfolio A AND Portfolio B? 
+    // If so, `group.stats.totalQty` is mixed.
+    // Let's assume 1 Center = Mixed. We need to split it based on Executions "net flow".
+
+    // Reset Globals
+    globalTotalQty = 0;
+    let globalWeightedSum = 0;
+    const breakdown = {};
+
+    relevantGroups.forEach(group => {
+        // Calculate Net Qty per Portfolio within this Center
+        const centerPfs = {};
+
+        group.executions.forEach(ex => {
+            const pid = ex.portfolioId || 'OTHER';
+            if (!centerPfs[pid]) centerPfs[pid] = 0;
+            const q = parseFloat(ex.qty);
+
+            if (['OPEN', 'ADD', 'AVERAGE'].includes(ex.type)) centerPfs[pid] += q;
+            else centerPfs[pid] -= q; // Deduct
+        });
+
+        // Now add to Global Breakdown
+        Object.entries(centerPfs).forEach(([pid, qty]) => {
+            if (qty <= 0) return; // Ignore closed portions
+
+            const pName = portfoliosMap[pid] || (pid === 'OTHER' ? 'غير محدد' : pid);
+            if (!breakdown[pName]) breakdown[pName] = 0;
+            breakdown[pName] += qty;
+
+            globalTotalQty += qty;
+            // Weighted Sum using the CENTER'S average price (assumed uniform for the center)
+            globalWeightedSum += (qty * group.stats.avgPrice);
+        });
+    });
+
+    const globalAvg = globalTotalQty > 0 ? (globalWeightedSum / globalTotalQty) : 0;
+    const marketVal = globalTotalQty * globalAvg; // Or use live price if available? globalAvg is Cost basis.
+
+    // 3. Render
+    document.getElementById('g-avg-price').textContent = globalAvg.toFixed(2);
+    document.getElementById('g-total-qty').textContent = globalTotalQty.toLocaleString();
+    document.getElementById('g-mkt-val').textContent = marketVal.toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+    list.innerHTML = '';
+    Object.entries(breakdown).forEach(([name, qty]) => {
+        list.innerHTML += `
+        <div class="exec-row" style="background:rgba(255,255,255,0.02)">
+            <span style="color:#aaa">${name}</span>
+            <strong>${qty.toLocaleString()}</strong>
+        </div>`;
+    });
+};
+// --- TRADING TOOLS CALCULATORS ---
+
+// 1. Commission Calculator
+window.currentBroker = 'thndr'; // Default
+window.selectBroker = (broker, el) => {
+    window.currentBroker = broker;
+    document.querySelectorAll('.radio-label').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+    window.calcCommission();
+};
+
+window.calcCommission = () => {
+    const buy = parseFloat(document.getElementById('c-buy').value) || 0;
+    const sell = parseFloat(document.getElementById('c-sell').value) || 0;
+    const qty = parseFloat(document.getElementById('c-qty').value) || 0;
+
+    if (!buy || !sell || !qty) {
+        document.getElementById('c-result').innerText = '0.00';
+        document.getElementById('c-fees').innerText = '0.00';
+        return;
+    }
+
+    const totalBuy = buy * qty;
+    const totalSell = sell * qty;
+    let fees = 0;
+
+    if (window.currentBroker === 'thndr') {
+        // Thndr: roughly 2 EGP + stamp duty etc. Adjusted simply:
+        // (This is an approximation)
+        // Buy: 2 + 0.0005 * val? Let's use a standard simplified model or just 2 + 1.
+        // Approx 0.1% total roundtrip? 
+        // Let's use: (Total * 0.001) + 2 [Very rough]
+        fees = (totalBuy + totalSell) * 0.001 + 5;
+    } else {
+        // Commercial: Usually 0.4% - 0.5% roundtrip
+        fees = (totalBuy + totalSell) * 0.004;
+    }
+
+    const grossProfit = totalSell - totalBuy;
+    const netProfit = grossProfit - fees;
+
+    document.getElementById('c-result').innerText = netProfit.toFixed(2);
+    document.getElementById('c-result').style.color = netProfit >= 0 ? 'var(--success)' : 'var(--danger)';
+    document.getElementById('c-fees').innerText = fees.toFixed(2);
+};
+
+// 2. Average Down Calculator
+window.calcAverage = () => {
+    const cQty = parseFloat(document.getElementById('avg-curr-qty').value) || 0;
+    const cPrice = parseFloat(document.getElementById('avg-curr-price').value) || 0;
+    const nQty = parseFloat(document.getElementById('avg-new-qty').value) || 0;
+    const nPrice = parseFloat(document.getElementById('avg-new-price').value) || 0;
+
+    if ((cQty + nQty) === 0) return;
+
+    const totalVal = (cQty * cPrice) + (nQty * nPrice);
+    const newAvg = totalVal / (cQty + nQty);
+
+    document.getElementById('avg-result').innerText = newAvg.toFixed(2);
+};
+
+// 3. Risk & Position Sizing Calculator
+window.calcRR = () => {
+    const entry = parseFloat(document.getElementById('rr-entry').value) || 0;
+    const target = parseFloat(document.getElementById('rr-target').value) || 0;
+    const stop = parseFloat(document.getElementById('rr-stop').value) || 0;
+    const riskAmount = parseFloat(document.getElementById('rr-risk-amount').value) || 0;
+
+    const profitEl = document.getElementById('rr-profit');
+    const lossEl = document.getElementById('rr-loss');
+    const ratioEl = document.getElementById('rr-ratio');
+    const qtyEl = document.getElementById('rr-qty');
+
+    if (!entry) return;
+
+    let reward = 0;
+    let risk = 0;
+
+    if (target) reward = Math.abs(target - entry);
+    if (stop) risk = Math.abs(entry - stop);
+
+    // Calc Percentages
+    const riskPer = (risk / entry) * 100;
+    const rewardPer = (reward / entry) * 100;
+
+    profitEl.innerText = target ? `+${rewardPer.toFixed(1)}%` : '0%';
+    lossEl.innerText = stop ? `-${riskPer.toFixed(1)}%` : '0%';
+
+    // R:R Ratio
+    if (risk > 0 && reward > 0) {
+        const r = reward / risk;
+        ratioEl.innerText = `1 : ${r.toFixed(1)}`;
+        ratioEl.style.color = r >= 2 ? 'var(--success)' : (r < 1 ? 'var(--danger)' : 'var(--text-color)');
+    } else {
+        ratioEl.innerText = '0 : 0';
+        ratioEl.style.color = '#fff';
+    }
+
+    // Position Sizing
+    if (riskAmount > 0 && risk > 0) {
+        // RiskPerShare = |Entry - Stop|
+        // MaxShares = RiskAmount / RiskPerShare
+        const maxQty = Math.floor(riskAmount / risk);
+        qtyEl.innerText = maxQty.toLocaleString();
+    } else {
+        qtyEl.innerText = '-';
+    }
+};
+
+
+// ==========================================
+//       ENHANCED UI INTERACTIONS
+// ==========================================
+
+// Modern Tab Switcher
+window.switchCalcTab = (tabName, btn) => {
+    // Buttons
+    document.querySelectorAll('.sc-btn').forEach(b => b.classList.remove('active'));
+    // If btn is passed, use it. If not, find by tabName (optional fallback)
+    if (btn) btn.classList.add('active');
+
+    // Content
+    document.querySelectorAll('.calc-tab-content').forEach(c => c.classList.remove('active'));
+    const target = document.getElementById(`calc-${tabName}`);
+    if (target) {
+        target.classList.add('active');
+        // Animation trigger if needed
+        target.style.animation = 'none';
+        target.offsetHeight; /* trigger reflow */
+        target.style.animation = 'fadeIn 0.3s ease';
+    }
+};
+
+// Modern Broker Selector
+window.selectBroker = (broker, el) => {
+    window.currentBroker = broker;
+    document.querySelectorAll('.broker-option').forEach(r => r.classList.remove('selected'));
+    if (el) {
+        el.classList.add('selected');
+    }
+    window.calcCommission();
+};
+
+// Ensure Risk Visualizer Updates on Load/Input
+// (Calculated inside calcRR which is triggered by oninput)
