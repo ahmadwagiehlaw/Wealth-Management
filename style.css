@@ -2000,6 +2000,7 @@ input[type="date"] {
     color: #ff453a;
     border: 1px solid rgba(255, 69, 58, 0.3);
 }
+
 /* === Market Ticker Modern Styles === */
 .market-ticker-inline {
     display: flex;
@@ -2022,8 +2023,10 @@ input[type="date"] {
     gap: 15px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
+    /* Firefox */
 }
+
 .ticker-scroll-area::-webkit-scrollbar {
     display: none;
 }
@@ -2050,8 +2053,13 @@ input[type="date"] {
     font-family: 'Inter', sans-serif;
 }
 
-.t-val.text-green { color: #30d158; }
-.t-val.text-danger { color: #ff453a; }
+.t-val.text-green {
+    color: #30d158;
+}
+
+.t-val.text-danger {
+    color: #ff453a;
+}
 
 .sep {
     width: 1px;
@@ -2072,10 +2080,12 @@ input[type="date"] {
     justify-content: center;
     transition: all 0.2s;
 }
+
 .btn-ticker-refresh:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: rotate(180deg);
 }
+
 .btn-ticker-refresh:active {
     transform: scale(0.9);
 }
@@ -2100,8 +2110,598 @@ input[type="date"] {
     font-weight: 700;
     font-family: 'Inter', sans-serif;
 }
-.text-blue { color: #0a84ff; }
+
+.text-blue {
+    color: #0a84ff;
+}
+
 .vertical-divider.mini {
     height: 25px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* === JOURNAL MODULE STYLES === */
+.journal-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.j-stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.j-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.j-stat-card strong {
+    font-size: 1.2rem;
+    display: block;
+}
+
+.leakage-card {
+    margin-bottom: 20px;
+    border-left: 3px solid var(--danger);
+}
+
+.leakage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.leak-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.9rem;
+}
+
+.centers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.center-card {
+    background: rgba(30, 30, 30, 0.6);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.center-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+}
+
+.center-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.center-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.badge-long {
+    background: rgba(0, 255, 136, 0.15);
+    color: #00ff88;
+}
+
+.badge-short {
+    background: rgba(255, 59, 48, 0.15);
+    color: #ff3b30;
+}
+
+/* Tags UI */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.tag-check {
+    position: relative;
+}
+
+.tag-check input {
+    position: absolute;
+    opacity: 0;
+}
+
+.tag-check label {
+    display: block;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: 0.2s;
+}
+
+.tag-check input:checked+label {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+    font-weight: bold;
+}
+
+.journal-timeline {
+    margin-top: 20px;
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    padding-left: 20px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.timeline-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--primary);
+    border-radius: 50%;
+    position: absolute;
+    left: -27px;
+    top: 5px;
+    border: 2px solid #000;
+}
+
+
+/* === JOURNAL POLISH (Buttons & Actions) === */
+.journal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-j-action {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #ccc;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    backdrop-filter: blur(5px);
+}
+
+.btn-j-action:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.btn-j-primary {
+    background: linear-gradient(135deg, var(--primary), #00cc6a);
+    color: #000;
+    border: none;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+}
+
+.btn-j-primary:hover {
+    opacity: 0.95;
+    box-shadow: 0 6px 20px rgba(0, 255, 136, 0.3);
+}
+
+
+/* === Journal Edit/Delete Buttons === */
+.icon-btn-sm {
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    color: #666;
+    cursor: pointer;
+    padding: 4px;
+    transition: 0.2s;
+    border-radius: 4px;
+}
+
+.icon-btn-sm:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.icon-btn-sm.text-danger:hover {
+    color: #ff4d4d;
+    background: rgba(255, 77, 77, 0.1);
+}
+
+
+/* === Journal Layout Refinements === */
+.transition-transform {
+    transition: transform 0.3s ease;
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.leakage-list {
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+
+/* === Timeline Modal Styles === */
+.timeline-container {
+    padding: 20px 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 25px;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: -25px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.timeline-item:last-child::before {
+    bottom: 0;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -5px;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+.timeline-date {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.timeline-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+.t-tag {
+    display: inline-block;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+/* === Journal 2.0 Card Layout (Grouped) === */
+.center-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.center-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    /* Slight header separation */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ch-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stock-ticker {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.stock-status {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+.status-open {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+}
+
+.status-closed {
+    background: rgba(255, 255, 255, 0.1);
+    color: #888;
+}
+
+.ch-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-header-add {
+    background: rgba(0, 255, 136, 0.15);
+    color: #00ff88;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.9rem;
+}
+
+.btn-header-add:hover {
+    background: #00ff88;
+    color: #000;
+    transform: scale(1.05);
+}
+
+.ch-pnl {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.ch-label {
+    font-size: 0.7rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ch-val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+}
+
+.center-body {
+    padding: 15px;
+    background: transparent;
+}
+
+.cb-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.cb-label {
+    color: #888;
+}
+
+.cb-val {
+    font-weight: 500;
+}
+
+.cb-note {
+    font-style: italic;
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    border-left: 2px solid #444;
+    padding-left: 10px;
+}
+
+.center-footer {
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cf-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action-primary {
+    background: var(--primary);
+    color: #000;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.2s;
+}
+
+.btn-action-primary:hover {
+    transform: translateY(-2px);
+    background: #00ff9d;
+}
+
+.icon-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* === Journal Accordion & Execution List === */
+/* === Journal Accordion & Execution List === */
+.center-details-box {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s ease-out;
+    background: rgba(0, 0, 0, 0.4);
+    /* Darker contrast to pop */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0 -15px -15px -15px;
+    width: calc(100% + 30px);
+}
+
+.center-details-box.open {
+    max-height: 500px;
+    /* Arbitrary large height */
+    overflow-y: auto;
+}
+
+.exec-list {
+    padding: 0;
+}
+
+.exec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    /* More breathing room */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.9rem;
+    transition: background 0.2s;
+    border-left: 3px solid transparent;
+    /* Indicator strip */
+}
+
+.exec-row:last-child {
+    border-bottom: none;
+}
+
+.exec-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Dynamic Left Border based on Type */
+.exec-row.type-buy {
+    border-left-color: var(--success);
+}
+
+.exec-row.type-sell {
+    border-left-color: var(--primary);
+}
+
+.exec-row.type-loss {
+    border-left-color: var(--danger);
+}
+
+.exec-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.exec-type-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #ccc;
+}
+
+/* Type Colors for Text */
+.text-buy {
+    color: #00ff88 !important;
+}
+
+.text-sell {
+    color: #32d74b !important;
+}
+
+.text-loss {
+    color: #ff453a !important;
+}
+
+.exec-actions-bar {
+    display: flex;
+    gap: 10px;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+}
+
+.exec-row:hover .exec-actions-bar {
+    opacity: 1;
+}
+
+.center-toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.center-card.expanded .center-toggle-icon {
+    transform: rotate(180deg);
+}
+
+.empty-execs {
+    text-align: center;
+    padding: 30px;
+    color: #666;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }

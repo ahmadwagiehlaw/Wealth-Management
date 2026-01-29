@@ -1262,197 +1262,7 @@ function renderChart(data) {
 
 // Journal
 
-// === Journal V2 Implementation ===
-
-window.showAddTradeModal = () => {
-    // Dynamic Modal for Journal Entry
-    const modalHtml = `
-<dialog id="journal-modal" class="modal">
-    <div class="modal-content glass-card">
-        <button onclick="document.getElementById('journal-modal').close()" style="position:absolute; top:20px; left:20px; background:none; border:none; color:#888; font-size:1.2rem; cursor:pointer;">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h3>New Journal Entry</h3>
-        
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <input id="jt-ticker" placeholder="Ticker (e.g. AAPL)" style="text-transform:uppercase">
-            <select id="jt-type">
-                <option value="LONG">Long</option>
-                <option value="SHORT">Short</option>
-            </select>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-            <input id="jt-date" type="date">
-            <select id="jt-result">
-                <option value="WIN">Win</option>
-                <option value="LOSS">Loss</option>
-                <option value="BE">Break Even</option>
-            </select>
-        </div>
-
-        <div class="input-group" style="margin-top:10px;">
-            <input id="jt-setup" placeholder="Setup / Strategy (e.g. Breakout)">
-        </div>
-
-        <div class="input-group">
-            <input id="jt-rr" type="number" step="0.1" placeholder="Realized R:R (e.g. 2.5)">
-        </div>
-        
-        <div class="input-group">
-             <input id="jt-profit" type="number" placeholder="P&L Amount ($)">
-        </div>
-
-        <div class="input-group">
-            <textarea id="jt-lesson" rows="3" placeholder="What did you learn? (The most important part!)"></textarea>
-        </div>
-
-        <div class="modal-actions">
-            <button class="btn-text" onclick="document.getElementById('journal-modal').close()">Cancel</button>
-            <button class="btn-primary" onclick="window.submitJournalEntry()">Save Entry</button>
-        </div>
-    </div>
-</dialog>
-`;
-
-    // Check if exists, remove it first
-    const existing = document.getElementById('journal-modal');
-    if (existing) existing.remove();
-
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-    const modal = document.getElementById('journal-modal');
-    document.getElementById('jt-date').valueAsDate = new Date();
-    modal.showModal();
-};
-
-window.submitJournalEntry = async () => {
-    const ticker = document.getElementById('jt-ticker').value.toUpperCase();
-    const type = document.getElementById('jt-type').value;
-    const date = document.getElementById('jt-date').value;
-    const result = document.getElementById('jt-result').value;
-    const setup = document.getElementById('jt-setup').value;
-    const rr = document.getElementById('jt-rr').value;
-    const profit = document.getElementById('jt-profit').value;
-    const lesson = document.getElementById('jt-lesson').value;
-
-    if (!ticker || !date) {
-        showToast('Please enter at least Ticker and Date', 'error');
-        return;
-    }
-
-    showLoading();
-    try {
-        await addDoc(collection(db, "users", auth.currentUser.uid, "trades"), {
-            ticker, type,
-            date: new Date(date),
-            result, setup,
-            rr: rr ? parseFloat(rr) : null,
-            profit: profit ? parseFloat(profit) : 0,
-            lesson,
-            createdAt: serverTimestamp()
-        });
-
-        showToast('Journal Entry Saved!', 'success');
-        document.getElementById('journal-modal').close();
-    } catch (e) {
-        showToast('Error: ' + e.message, 'error');
-    } finally {
-        hideLoading();
-    }
-};
-
-window.loadJournal = () => {
-    if (journalUnsub) journalUnsub();
-
-    const q = query(collection(db, "users", auth.currentUser.uid, "trades"), orderBy("date", "desc"), limit(50));
-
-    journalUnsub = onSnapshot(q, (snap) => {
-        let trades = [];
-        snap.forEach(d => trades.push({ id: d.id, ...d.data() }));
-
-        updateJournalStats(trades);
-        renderJournalTimeline(trades);
-    });
-};
-
-function updateJournalStats(trades) {
-    if (trades.length === 0) {
-        document.getElementById('j-winrate').textContent = '--%';
-        document.getElementById('j-avg-rr').textContent = '--';
-        document.getElementById('j-total-trades').textContent = '0';
-        return;
-    }
-
-    let wins = 0;
-    let totalRR = 0;
-    let rrCount = 0;
-
-    trades.forEach(t => {
-        if (t.result === 'WIN') wins++;
-        if (t.rr) {
-            totalRR += parseFloat(t.rr);
-            rrCount++;
-        }
-    });
-
-    const winRate = ((wins / trades.length) * 100).toFixed(0);
-    const avgRR = rrCount > 0 ? (totalRR / rrCount).toFixed(2) : '0';
-
-    console.log(`DEBUG: Stats Updated. Trades: ${trades.length}, Wins: ${wins}, TotalRR: ${totalRR}, Count: ${rrCount}, Avg: ${avgRR}`);
-
-    if (document.getElementById('j-winrate')) document.getElementById('j-winrate').textContent = winRate + '%';
-    if (document.getElementById('j-avg-rr')) document.getElementById('j-avg-rr').textContent = avgRR;
-
-    // Global dashboard element
-    const globalRR = document.getElementById('global-rr');
-    if (globalRR) {
-        globalRR.textContent = avgRR + 'R';
-        // Add color based on value
-        globalRR.className = 'ws-value ' + (parseFloat(avgRR) >= 1 ? 'success-text' : '');
-    }
-    document.getElementById('j-total-trades').textContent = trades.length;
-}
-
-function renderJournalTimeline(trades) {
-    const timeline = document.getElementById('journal-timeline');
-    timeline.innerHTML = '';
-
-    if (trades.length === 0) {
-        timeline.innerHTML = `
-    <div class="empty-state">
-        <i class="fa-solid fa-book-open"></i>
-        <p>No trades yet. Start capturing your lessons!</p>
-    </div>`;
-        return;
-    }
-
-    trades.forEach(t => {
-        const dateObj = t.date.toDate ? t.date.toDate() : new Date(t.date);
-        const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-
-        const isWin = t.result === 'WIN';
-        const resultClass = isWin ? 'win' : (t.result === 'LOSS' ? 'loss' : '');
-        const pnlColor = isWin ? 'text-green' : (t.result === 'LOSS' ? 'text-danger' : '');
-        const profitSign = t.profit > 0 ? '+' : '';
-        const profitDisplay = t.profit ? `<span class="${pnlColor}">${profitSign}$${t.profit}</span>` : '';
-
-        timeline.innerHTML += `
-    <div class="timeline-item ${resultClass}">
-        <div class="trade-card">
-            <div class="trade-header">
-                <span class="trade-ticker">${t.ticker}</span>
-                <span class="trade-pnl">${profitDisplay}</span>
-            </div>
-            <div style="font-size:0.8rem; color:#888; margin-bottom:5px;">
-                ${t.type} • ${dateStr} • ${t.setup || 'No Setup'}
-            </div>
-            ${t.lesson ? `<div class="trade-lesson">"${t.lesson}"</div>` : ''}
-        </div>
-    </div>
-`;
-    });
-}
+// (Legacy Journal V1 Removed)
 
 
 
@@ -1805,6 +1615,669 @@ window.updateChartFilter = (period) => {
     }
 };
 
+/* ========================================= */
+/*        TRADING JOURNAL MODULE (NEW)       */
+/* ========================================= */
+
+// --- UI MANAGERS ---
+window.journalCache = [];
+window.journalFilter = 'ALL';
+
+window.openNewCenterModal = () => {
+    // Reset Edit Mode
+    document.getElementById('jc-edit-id').value = '';
+    document.getElementById('btn-save-center').textContent = 'فتح المركز';
+
+    // Clear Fields
+    document.getElementById('jc-asset').value = '';
+    document.getElementById('jc-thesis').value = '';
+    document.getElementById('jc-stop').value = '';
+    document.getElementById('jc-target').value = '';
+
+    document.getElementById('new-center-modal').showModal();
+};
+
+window.showAddExecModal = async (centerId) => {
+    document.getElementById('exec-center-id').value = centerId;
+    document.getElementById('exec-edit-id').value = ''; // Reset Edit ID
+    document.getElementById('btn-save-exec').textContent = 'تسجيل';
+    document.getElementById('add-execution-title').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> تسجيل تنفيذ';
+
+    // Populate Portfolios
+    const pSelect = document.getElementById('exec-portfolio');
+    pSelect.innerHTML = '<option value="NONE">بدون محفظة (Global)</option>';
+
+    try {
+        const snap = await getDocs(collection(db, 'users', auth.currentUser.uid, 'portfolios'));
+        snap.forEach(doc => {
+            const p = doc.data();
+            const option = document.createElement('option');
+            option.value = doc.id;
+            option.textContent = p.name + (p.currency ? ` (${p.currency})` : '');
+            pSelect.appendChild(option);
+        });
+    } catch (e) { console.error('Failed to load portfolios for select', e); }
+
+    // Reset Fields
+    document.getElementById('exec-type').value = 'OPEN';
+    document.getElementById('exec-price').value = '';
+    document.getElementById('exec-qty').value = '';
+    document.getElementById('exec-date').valueAsDate = new Date();
+    document.getElementById('exec-portfolio').value = "NONE";
+    document.getElementById('exec-mistake').value = 'NONE';
+    document.querySelectorAll('.tags-container input').forEach(cb => cb.checked = false);
+
+    document.getElementById('add-execution-modal').showModal();
+};
+
+// --- CORE LOGIC: Create / Update Campaign ---
+window.submitNewCenter = async () => {
+    const editId = document.getElementById('jc-edit-id').value;
+    const asset = document.getElementById('jc-asset').value;
+    const direction = document.getElementById('jc-direction').value;
+    const strategy = document.getElementById('jc-strategy').value;
+    const thesis = document.getElementById('jc-thesis').value;
+    const stop = document.getElementById('jc-stop').value;
+    const target = document.getElementById('jc-target').value;
+
+    if (!asset) return showToast('Please enter an Asset Symbol', 'error');
+
+    showLoading();
+    try {
+        const data = {
+            asset: asset.toUpperCase(),
+            direction,
+            strategy,
+            thesis,
+            stop: parseFloat(stop) || 0,
+            target: parseFloat(target) || 0,
+            lastUpdate: serverTimestamp()
+        };
+
+        if (editId) {
+            // UPDATE EXISTING
+            await updateDoc(doc(db, 'users', auth.currentUser.uid, 'journal_centers', editId), data);
+            showToast('Campaign Updated Successfully! 📝', 'success');
+        } else {
+            // CREATE NEW
+            data.status = 'OPEN';
+            data.createdAt = serverTimestamp();
+            await addDoc(collection(db, 'users', auth.currentUser.uid, 'journal_centers', editId), data);
+            showToast('Campaign Opened Successfully! ♟️', 'success');
+        }
+
+        document.getElementById('new-center-modal').close();
+        window.loadJournal(); // Refresh
+    } catch (e) {
+        console.error(e);
+        showToast('Error saving campaign', 'error');
+    } finally {
+        hideLoading();
+    }
+};
+
+window.editCenter = (id) => {
+    const center = window.journalCache.find(c => c.id === id);
+    if (!center) return;
+
+    document.getElementById('jc-edit-id').value = id;
+    document.getElementById('jc-asset').value = center.asset;
+    document.getElementById('jc-direction').value = center.direction;
+    document.getElementById('jc-strategy').value = center.strategy;
+    document.getElementById('jc-thesis').value = center.thesis || '';
+    document.getElementById('jc-stop').value = center.stop;
+    document.getElementById('jc-target').value = center.target;
+
+    document.getElementById('btn-save-center').textContent = 'حفظ التعديلات';
+    document.getElementById('new-center-modal').showModal();
+};
+
+// --- CORE LOGIC: Add / Edit Execution ---
+window.submitExecution = async () => {
+    const centerId = document.getElementById('exec-center-id').value;
+    const editExecId = document.getElementById('exec-edit-id').value;
+
+    const type = document.getElementById('exec-type').value;
+    const price = parseFloat(document.getElementById('exec-price').value);
+    const qty = parseFloat(document.getElementById('exec-qty').value);
+    const dateInput = document.getElementById('exec-date').value;
+    const portfolioId = document.getElementById('exec-portfolio').value; // Get Portfolio
+
+    const date = dateInput ? new Date(dateInput) : new Date();
+    const mistake = document.getElementById('exec-mistake').value;
+
+    const tags = [];
+    document.querySelectorAll('.tags-container input:checked').forEach(cb => tags.push(cb.value));
+
+    if (!price || !qty) return showToast('Please check Price/Qty', 'error');
+
+    const btn = document.getElementById('btn-save-exec');
+    btn.disabled = true;
+    btn.textContent = 'جاري الحفظ...';
+
+    showLoading();
+
+    try {
+        const data = {
+            type,
+            price,
+            qty,
+            date,
+            portfolioId: portfolioId === "NONE" ? null : portfolioId, // Save Logic
+            tags,
+            mistake
+        };
+
+        if (editExecId) {
+            // Update Existing Execution
+            await updateDoc(doc(db, 'users', auth.currentUser.uid, 'journal_centers', centerId, 'executions', editExecId), data);
+            showToast('Execution Updated! 📝', 'success');
+        } else {
+            // Create New
+            data.createdAt = serverTimestamp();
+            await addDoc(collection(db, 'users', auth.currentUser.uid, 'journal_centers', centerId, 'executions'), data);
+            showToast('Execution Logged! 📝', 'success');
+        }
+
+        document.getElementById('add-execution-modal').close();
+        window.loadJournal(); // Refresh
+    } catch (e) {
+        console.error(e);
+        showToast('Failed to save execution', 'error');
+    } finally {
+        hideLoading();
+        btn.disabled = false;
+        btn.textContent = 'تسجيل';
+    }
+};
+
+window.editExecution = (centerId, execId) => {
+    const center = window.journalCache.find(c => c.id === centerId);
+    if (!center) return;
+    const exec = center.executions.find(e => e.id === execId);
+    if (!exec) return;
+
+    document.getElementById('exec-center-id').value = centerId;
+    document.getElementById('exec-edit-id').value = execId;
+    document.getElementById('add-execution-title').innerHTML = '<i class="fa-solid fa-pen"></i> تعديل تنفيذ';
+    document.getElementById('btn-save-exec').textContent = 'حفظ التعديلات';
+
+    document.getElementById('exec-type').value = exec.type;
+    document.getElementById('exec-price').value = exec.price;
+    document.getElementById('exec-qty').value = exec.qty;
+    // Handle Date
+    const d = exec.date && exec.date.toDate ? exec.date.toDate() : new Date(exec.date);
+    document.getElementById('exec-date').value = d.toISOString().split('T')[0];
+
+    document.getElementById('exec-mistake').value = exec.mistake || 'NONE';
+
+    // Tags
+    document.querySelectorAll('.tags-container input').forEach(cb => {
+        cb.checked = exec.tags && exec.tags.includes(cb.value);
+    });
+
+    document.getElementById('add-execution-modal').showModal();
+};
+
+window.deleteExecution = async (centerId, execId) => {
+    if (!confirm('هل أنت متأكد من حذف هذا التنفيذ؟')) return;
+    try {
+        await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'journal_centers', centerId, 'executions', execId));
+        showToast('Execution Deleted', 'success');
+        window.loadJournal();
+    } catch (e) {
+        console.error(e);
+        showToast('Error deleting execution', 'error');
+    }
+};
+
+// --- CORE LOGIC: Load Journal & Analytics ---
+window.loadJournal = async () => {
+    if (!auth.currentUser) return;
+    const list = document.getElementById('active-centers-list');
+    if (!list) return;
+    list.innerHTML = '<div class="spinner"></div>';
+
+    try {
+        // Fetch All Centers
+        const q = query(collection(db, 'users', auth.currentUser.uid, 'journal_centers'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+
+        // Pre-process Data for Cache
+        window.journalCache = [];
+
+        for (const docSnap of snap.docs) {
+            const d = docSnap.data();
+            const centerItem = { id: docSnap.id, ...d, executions: [], stats: {} };
+
+            // Fetch Executions (Subcollection)
+            const execsRef = collection(db, 'users', auth.currentUser.uid, 'journal_centers', docSnap.id, 'executions');
+            const execsSnap = await getDocs(execsRef);
+
+            let execsData = [];
+            execsSnap.forEach(e => execsData.push({ id: e.id, ...e.data() }));
+
+            // CRITICAL: Sort by Date ASC (Oldest First) for correct Avg Price Calc
+            execsData.sort((a, b) => {
+                const da = a.date && a.date.toDate ? a.date.toDate() : new Date(a.date);
+                const db = b.date && b.date.toDate ? b.date.toDate() : new Date(b.date);
+                return da - db;
+            });
+
+            let realizedPnL = 0;
+            let totalQty = 0;
+            let avgPrice = 0;
+            let currentMistake = 'NONE';
+            let mistakeCost = 0;
+            let investedCapital = 0; // Track max invested for ROI calc
+
+            execsData.forEach(ed => {
+                const q = parseFloat(ed.qty) || 0;
+                const p = parseFloat(ed.price) || 0;
+
+                if (ed.mistake && ed.mistake !== 'NONE') currentMistake = ed.mistake;
+
+                if (ed.type === 'OPEN' || ed.type === 'ADD' || ed.type === 'AVERAGE') {
+                    const oldCost = totalQty * avgPrice;
+                    const newCost = q * p;
+                    totalQty += q;
+                    avgPrice = (oldCost + newCost) / (totalQty || 1);
+                    investedCapital += newCost;
+                } else if (ed.type.includes('TP') || ed.type.includes('SL') || ed.type === 'EXIT' || ed.type === 'CUT_EARLY') {
+                    const profit = (p - avgPrice) * q;
+                    realizedPnL += profit;
+                    totalQty -= q; // Reduce qty
+                    if (totalQty < 0) totalQty = 0; // Safety
+                    if (profit < 0 && currentMistake !== 'NONE') mistakeCost += Math.abs(profit);
+                }
+            });
+
+            // Assign Sorted Executions to Center
+            centerItem.executions = execsData;
+
+            // Derive Stats
+            centerItem.stats = {
+                realizedPnL,
+                totalQty,
+                avgPrice,
+                mistakeCost,
+                currentMistake,
+                investedCapital,
+                roi: investedCapital > 0 ? (realizedPnL / investedCapital) * 100 : 0,
+                isOpen: totalQty > 0 || Math.abs(realizedPnL) < 1,
+                isWin: totalQty === 0 && realizedPnL > 0,
+                isLoss: totalQty === 0 && realizedPnL < 0
+            };
+
+            // Override Status
+            if (totalQty === 0 && Math.abs(realizedPnL) > 1) {
+                centerItem.status = 'CLOSED';
+            } else {
+                centerItem.status = 'OPEN';
+            }
+
+            window.journalCache.push(centerItem);
+        }
+
+        window.renderJournalList();
+
+    } catch (e) {
+        console.error(e);
+        list.innerHTML = '<p class="text-danger">خطأ في تحميل السجل</p>';
+    }
+};
+
+window.setJournalFilter = (filterType) => {
+    window.journalFilter = filterType;
+    document.querySelectorAll('.j-filter').forEach(b => {
+        b.classList.remove('active');
+        if (b.dataset.filter === filterType) b.classList.add('active');
+    });
+    window.renderJournalList();
+};
+
+window.toggleCenterDetails = (id, cardElement) => {
+    const detailsBox = document.getElementById('details-' + id);
+    if (detailsBox) {
+        detailsBox.classList.toggle('open');
+        cardElement.classList.toggle('expanded');
+    }
+};
+
+window.renderJournalList = () => {
+    const list = document.getElementById('active-centers-list');
+    list.innerHTML = '';
+
+    const filter = window.journalFilter;
+    const filteredData = window.journalCache.filter(item => {
+        if (filter === 'ALL') return true;
+        if (filter === 'OPEN') return item.stats.totalQty > 0; // Truly open
+        if (filter === 'WIN') return item.stats.isWin;
+        if (filter === 'LOSS') return item.stats.isLoss;
+        return true;
+    });
+
+    if (filteredData.length === 0) {
+        list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-filter"></i><p>لا توجد نتائج لهذا الفلتر.</p></div>';
+        // Reset stats to 0
+        document.getElementById('j-winrate').innerText = '--%';
+        document.getElementById('j-avg-rr').innerText = '--';
+        document.getElementById('j-total-trades').innerText = '0';
+        return;
+    }
+
+    // Calc Filtered Stats
+    let globalWins = 0;
+    let globalLosses = 0;
+    let globalWinAmount = 0;
+    let globalLossAmount = 0;
+    let completedTrades = 0;
+    const mistakeCosts = {};
+
+    // --- GROUPING LOGIC START ---
+    const groups = {};
+
+    // 1. Group Data
+    filteredData.forEach(item => {
+        const key = item.asset || 'UNKNOWN';
+        if (!groups[key]) {
+            groups[key] = {
+                asset: key,
+                totalRealizedPnL: 0,
+                totalQty: 0, // Sum of remaining qty
+                centers: [],
+                allExecutions: [],
+                latestDate: 0,
+                latestCenterId: null
+            };
+        }
+
+        // Aggregate
+        groups[key].totalRealizedPnL += (item.stats.realizedPnL || 0);
+        groups[key].totalQty += (item.stats.totalQty || 0);
+        groups[key].centers.push(item);
+
+        // Merge Executions with Context
+        if (item.executions) {
+            item.executions.forEach(ex => {
+                groups[key].allExecutions.push({
+                    centerId: item.id, // Keep ref to parent center for editing
+                    ...ex
+                });
+            });
+        }
+
+        // Track Latest
+        const itemDate = item.createdAt && item.createdAt.toDate ? item.createdAt.toDate().getTime() : 0;
+        if (itemDate > groups[key].latestDate) {
+            groups[key].latestDate = itemDate;
+            groups[key].latestCenterId = item.id;
+        }
+
+        // Stats Aggregation (for global stats)
+        const stats = item.stats;
+        if (stats.totalQty === 0 && Math.abs(stats.realizedPnL) > 1) {
+            completedTrades++;
+            if (stats.realizedPnL > 0) {
+                globalWins++;
+                globalWinAmount += stats.realizedPnL;
+            } else {
+                globalLosses++;
+                globalLossAmount += Math.abs(stats.realizedPnL);
+            }
+        }
+
+        // Mistake Aggregation (for global stats)
+        if (stats.mistakeCost > 0 && stats.currentMistake !== 'NONE') {
+            if (!mistakeCosts[stats.currentMistake]) mistakeCosts[stats.currentMistake] = 0;
+            mistakeCosts[stats.currentMistake] += stats.mistakeCost;
+        }
+    });
+
+    // 2. Render Groups
+    Object.values(groups).forEach(group => {
+
+        // Sort Executions Newest First
+        group.allExecutions.sort((a, b) => {
+            const da = a.date && a.date.toDate ? a.date.toDate() : new Date(a.date);
+            const db = b.date && b.date.toDate ? b.date.toDate() : new Date(b.date);
+            return db - da;
+        });
+
+        // Determine Group Status (Active if ANY qty > 0)
+        // Or if we want to show closed campaigns too.
+        // For visual, if totalQty > 0 it's OPEN.
+        const isOpen = group.totalQty > 0;
+        const statusClass = isOpen ? 'status-open' : 'status-closed';
+        const pnlClass = group.totalRealizedPnL >= 0 ? 'text-green' : 'text-danger';
+        const pnlString = group.totalRealizedPnL.toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+        // Use the latest center's strategy/notes for the main card (or aggregate?)
+        // Let's use the Latest Center as the "Face" of the card
+        const faceCenter = group.centers.find(c => c.id === group.latestCenterId) || group.centers[0];
+
+        // --- GENERATE ACCORDION HTML (For Group) ---
+        let execsHtml = '';
+        if (group.allExecutions.length === 0) {
+            execsHtml = `
+                <div class="empty-execs">
+                    <i class="fa-solid fa-box-open" style="font-size:1.5rem; opacity:0.5"></i>
+                    <span>لا توجد صفقات مسجلة بعد</span>
+                </div>`;
+        } else {
+            group.allExecutions.forEach(ex => {
+                let typeBadgeClass = 'type-buy'; // Default
+                let typeTextClass = 'text-buy';
+
+                // Classify
+                if (ex.type.includes('TP') || ex.type === 'EXIT') {
+                    typeBadgeClass = 'type-sell'; typeTextClass = 'text-sell';
+                }
+                if (ex.type.includes('SL') || ex.type === 'CUT_EARLY') {
+                    typeBadgeClass = 'type-loss'; typeTextClass = 'text-loss';
+                }
+                // Special case for OPEN/ADD
+                if (ex.type === 'OPEN' || ex.type === 'ADD') {
+                    typeBadgeClass = 'type-buy'; typeTextClass = 'text-buy';
+                }
+
+                const exDate = ex.date && ex.date.toDate ? ex.date.toDate() : new Date(ex.date);
+
+                execsHtml += `
+                 <div class="exec-row ${typeBadgeClass}">
+                    <div class="exec-meta">
+                        <span class="exec-type-badge ${typeTextClass}">${ex.type}</span>
+                        <span style="color:#666; font-size:0.75rem">${exDate.toLocaleDateString('ar-EG')}</span>
+                    </div>
+                    <div style="text-align:left">
+                        <strong>${ex.qty}</strong> <span style="font-size:0.8rem; color:#888; font-weight:normal">@ ${ex.price}</span>
+                    </div>
+                    <div class="exec-actions-bar">
+                        <button class="icon-btn-sm" onclick="event.stopPropagation(); window.editExecution('${ex.centerId}', '${ex.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="icon-btn-sm text-danger" onclick="event.stopPropagation(); window.deleteExecution('${ex.centerId}', '${ex.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                 </div>`;
+            });
+        }
+
+        const div = document.createElement('div');
+        div.className = 'center-card';
+        // Toggle Logic with Group ID (using Asset Name as unique enough for display, but safer to use hashed or just asset)
+        // Actually, let's use the asset name but sanitize it
+        const safeId = 'grp_' + group.asset.replace(/[^a-zA-Z0-9]/g, '');
+
+        div.setAttribute('onclick', `window.toggleCenterDetails('${safeId}', this)`);
+
+        div.innerHTML = `
+            <div class="center-header">
+                <div class="ch-left">
+                    <span class="stock-ticker">${group.asset}</span>
+                    <span class="stock-status ${statusClass}">${isOpen ? 'مفتوح' : 'مغلق'}</span>
+                </div>
+                <div class="ch-right">
+                    <!-- Add Trade Button Here (Header) -->
+                    <button class="icon-btn-sm btn-header-add" onclick="event.stopPropagation(); window.showAddExecModal('${group.latestCenterId}')" title="صفقة جديدة">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <div class="ch-pnl">
+                        <span class="ch-label">الربح</span>
+                        <span class="ch-val ${pnlClass}">${pnlString}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="center-body">
+                <div class="cb-row">
+                    <span class="cb-label">الكمية:</span>
+                    <span class="cb-val text-white">${group.totalQty}</span>
+                </div>
+                <div class="cb-row">
+                    <span class="cb-label">متوسط السعر:</span>
+                    <span class="cb-val text-white">${faceCenter.stats.avgPrice ? faceCenter.stats.avgPrice.toFixed(2) : '-'}</span>
+                </div>
+                 <!-- ROI for the Group? Difficult if mixed. Using Face Center stats for now or need Aggregation -->
+                 <div class="cb-row">
+                    <span class="cb-label">العائد (ROI):</span>
+                    <span class="cb-val ${faceCenter.stats.roi >= 0 ? 'text-green' : 'text-danger'}">${faceCenter.stats.roi ? faceCenter.stats.roi.toFixed(1) + '%' : '-'}</span>
+                </div>
+                 <div class="cb-row">
+                    <span class="cb-label">الاستراتيجية:</span>
+                    <span class="cb-val text-muted">${faceCenter.strategy || '-'}</span>
+                </div>
+            </div>
+
+             <!-- HIDDEN ACCORDION SECTION -->
+            <div id="details-${safeId}" class="center-details-box">
+                <div class="exec-list">
+                    ${execsHtml}
+                </div>
+                <!-- Actions Footer inside Accordion now? Or keep footer visible? -->
+                <!-- User complained about space. Let's keep minimal actions in the expanded part or bottom of fold -->
+                <div class="center-footer" style="border-top:1px solid rgba(255,255,255,0.05); padding-top:10px; margin-top:5px;">
+                     <button class="icon-btn text-muted" onclick="event.stopPropagation(); window.editCenter('${group.latestCenterId}')" title="تعديل الخطة"><i class="fa-solid fa-pen"></i></button>
+                     <button class="icon-btn text-danger" onclick="event.stopPropagation(); window.confirmDeleteCenter('${group.latestCenterId}')" title="حذف المركز"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+        `;
+        list.appendChild(div);
+    });
+
+    // Update Stats DOM
+    const winRate = completedTrades > 0 ? Math.round((globalWins / completedTrades) * 100) : 0;
+    const avgWin = globalWins > 0 ? globalWinAmount / globalWins : 0;
+    const avgLoss = globalLosses > 0 ? globalLossAmount / globalLosses : 1;
+    const rr = (avgWin / avgLoss).toFixed(2);
+
+    document.getElementById('j-winrate').innerText = winRate + '%';
+    document.getElementById('j-avg-rr').innerText = rr;
+    document.getElementById('j-total-trades').innerText = completedTrades;
+
+    // Render Leakage
+    const leakList = document.getElementById('leakage-list');
+    if (leakList) {
+        leakList.innerHTML = '';
+        const sortedMistakes = Object.entries(mistakeCosts).sort((a, b) => b[1] - a[1]);
+
+        if (sortedMistakes.length === 0) {
+            leakList.innerHTML = '<div style="text-align:center; padding:10px; color:#888; font-size:0.8rem">ممتاز! لا توجد أخطاء مكلفة.</div>';
+        } else {
+            sortedMistakes.forEach(([name, cost]) => {
+                const item = document.createElement('div');
+                item.className = 'leak-item';
+                item.innerHTML = `
+                    <span>${name}</span>
+                    <span class="text-danger">-${cost.toLocaleString()} ج.م</span>
+                    `;
+                leakList.appendChild(item);
+            });
+        }
+    }
+};
+
+// --- DELETE LOGIC ---
+window.confirmDeleteCenter = async (id) => {
+    if (confirm('هل أنت متأكد من حذف هذا المركز الاستثماري وكل صفقاته؟ لا يمكن التراجع.')) {
+        try {
+            await deleteDoc(doc(db, 'users', auth.currentUser.uid, 'journal_centers', id));
+            showToast('تم الحذف بنجاح', 'success');
+            window.loadJournal();
+        } catch (e) {
+            console.error(e);
+            showToast('خطأ في الحذف', 'error');
+        }
+    }
+}
+
+// (Legacy Edit Logic Removed)
+
+// --- REVIEW TIMELINE LOGIC ---
+window.showReviewTimeline = async (centerId) => {
+    const list = document.getElementById('timeline-container');
+    list.innerHTML = '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>جاري تحميل السجل...</p></div>';
+
+    document.getElementById('review-timeline-modal').showModal();
+
+    try {
+        const execsRef = collection(db, 'users', auth.currentUser.uid, 'journal_centers', centerId, 'executions');
+        const q = query(execsRef, orderBy('date', 'desc')); // Newest first
+        const snap = await getDocs(q);
+
+        list.innerHTML = '';
+        if (snap.empty) {
+            list.innerHTML = '<div class="empty-state"><p>لا توجد صفقات مسجلة بعد.</p></div>';
+            return;
+        }
+
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
+            const dateStr = d.date && d.date.toDate ? d.date.toDate().toLocaleString() : new Date(d.date).toLocaleString();
+
+            // Determine Color based on Type
+            let dotColor = 'var(--primary-color)';
+            let icon = 'fa-circle';
+            if (d.type.includes('OPEN') || d.type.includes('ADD')) { dotColor = '#00ff88'; icon = 'fa-arrow-up'; }
+            if (d.type.includes('TP')) { dotColor = '#00ccff'; icon = 'fa-sack-dollar'; }
+            if (d.type.includes('SL') || d.type.includes('CUT')) { dotColor = '#ff4d4d'; icon = 'fa-skull'; }
+
+            // Psychology Badges
+            let badgesHtml = '';
+            if (d.psychology && d.psychology.length > 0) {
+                d.psychology.forEach(tag => badgesHtml += `<span class="t-tag">${tag}</span>`);
+            }
+            if (d.mistake && d.mistake !== 'NONE') {
+                badgesHtml += `<span class="t-tag text-danger" style="border:1px solid red">${d.mistake}</span>`;
+            }
+
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
+            item.innerHTML = `
+                <div class="timeline-dot" style="background:${dotColor}; box-shadow:0 0 8px ${dotColor}"></div>
+                <div class="timeline-date">${dateStr}</div>
+                <div class="timeline-card">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <strong>${d.type}</strong>
+                        <span>${d.qty} @ ${d.price}</span>
+                    </div>
+                    <div style="font-size:0.8rem; margin-top:5px;">
+                        ${badgesHtml}
+                    </div>
+                </div>
+            `;
+            list.appendChild(item);
+        });
+
+    } catch (e) {
+        console.error(e);
+        list.innerHTML = '<p class="text-danger">خطأ في تحميل البيانات</p>';
+    }
+};
+
+// Listen for Nav Click
+document.getElementById('nav-journal')?.addEventListener('click', () => {
+    window.switchView('journal-section');
+    window.loadJournal();
+});
+
 window.handleHistoryUpdate = (snap) => {
     window.cachedHistoryData = [];
 
@@ -1869,15 +2342,160 @@ window.handleHistoryUpdate = (snap) => {
     let activeFilter = 'ALL';
     const activeBtn = document.querySelector('.filter-btn.active');
 
-    // If no button is active (first load), force ALL. If button is active, use it.
     if (activeBtn) {
         activeFilter = activeBtn.textContent.trim();
     } else {
-        // Activate ALL button visually
         const allBtn = Array.from(document.querySelectorAll('.filter-btn')).find(b => b.textContent.trim() === 'ALL');
         if (allBtn) allBtn.classList.add('active');
     }
 
-    // Handles Rendering Table, Chart, and Stats
     window.updateChartFilter(activeFilter);
 };
+
+// ==========================================
+//          BACKUP & RESTORE MODULE
+// ==========================================
+
+window.exportBackup = async () => {
+    showLoading();
+    try {
+        const uid = auth.currentUser.uid;
+        const backup = {
+            version: "2.0",
+            timestamp: new Date().toISOString(),
+            portfolios: [],
+            journal: []
+        };
+
+        // 1. Export Portfolios & History
+        const portfoliosSnap = await getDocs(collection(db, "users", uid, "portfolios"));
+        for (const pDoc of portfoliosSnap.docs) {
+            const pData = pDoc.data();
+            const pObj = { id: pDoc.id, data: pData, history: [], assets: [] }; // Assets might be legacy but we keep structure
+
+            // Fetch History
+            const histSnap = await getDocs(collection(db, "users", uid, "portfolios", pDoc.id, "history"));
+            histSnap.forEach(h => pObj.history.push({ id: h.id, ...h.data() }));
+
+            backup.portfolios.push(pObj);
+        }
+
+        // 2. Export Journal (Centers & Executions)
+        const centersSnap = await getDocs(collection(db, "users", uid, "journal_centers"));
+        for (const cDoc of centersSnap.docs) {
+            const cData = cDoc.data();
+            const cObj = { id: cDoc.id, data: cData, executions: [] };
+
+            // Fetch Executions
+            const execsSnap = await getDocs(collection(db, "users", uid, "journal_centers", cDoc.id, "executions"));
+            execsSnap.forEach(e => cObj.executions.push({ id: e.id, ...e.data() }));
+
+            backup.journal.push(cObj);
+        }
+
+        // Trigger Download
+        const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `my-wealth-backup-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showToast('تم تصدير النسخة الاحتياطية بنجاح 📦', 'success');
+
+    } catch (e) {
+        console.error(e);
+        showToast('فشل التصدير: ' + e.message, 'error');
+    } finally {
+        hideLoading();
+    }
+};
+
+window.importBackupData = async (fileInput) => {
+    if (!fileInput.files || !fileInput.files[0]) return;
+    const file = fileInput.files[0];
+
+    if (!confirm('تحذير: استعادة النسخة ستضيف البيانات إلى حسابك الحالي. هل أنت متأكد؟')) {
+        fileInput.value = ''; // Reset
+        return;
+    }
+
+    showLoading();
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            const uid = auth.currentUser.uid;
+
+            // 1. Restore Portfolios
+            if (data.portfolios && Array.isArray(data.portfolios)) {
+                for (const p of data.portfolios) {
+                    // Create/Update Portfolio
+                    const pRef = doc(db, "users", uid, "portfolios", p.id || ('restored_' + Date.now()));
+                    await setDoc(pRef, p.data);
+
+                    // Restore History
+                    if (p.history) {
+                        for (const h of p.history) {
+                            const hRef = doc(db, "users", uid, "portfolios", pRef.id, "history", h.id || ('h_' + Date.now()));
+                            await setDoc(hRef, h); // Contains value, date, type, etc.
+                        }
+                    }
+                }
+            }
+
+            // 2. Restore Journal
+            if (data.journal && Array.isArray(data.journal)) {
+                for (const c of data.journal) {
+                    // Create Center
+                    const cRef = doc(db, "users", uid, "journal_centers", c.id || ('restored_' + Date.now()));
+                    await setDoc(cRef, c.data);
+
+                    // Restore Executions
+                    if (c.executions) {
+                        for (const ex of c.executions) {
+                            const exRef = doc(db, "users", uid, "journal_centers", cRef.id, "executions", ex.id || ('x_' + Date.now()));
+                            await setDoc(exRef, ex);
+                        }
+                    }
+                }
+            }
+
+            showToast('تمت الاستعادة بنجاح! ♻️', 'success');
+            setTimeout(() => window.location.reload(), 1500); // Reload to reflect changes
+
+        } catch (err) {
+            console.error(err);
+            showToast('الملف فاسد أو غير متوافق', 'error');
+        } finally {
+            hideLoading();
+            fileInput.value = '';
+        }
+    };
+    reader.readAsText(file);
+};
+
+// --- NAVIGATION LOGIC ---
+window.setView = (viewId) => {
+    // Hide all views
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+
+    // Show target view
+    const target = document.getElementById(viewId + '-section');
+    if (target) {
+        target.classList.remove('hidden');
+        // Update Nav
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const navBtn = document.getElementById('nav-' + viewId);
+        if (navBtn) navBtn.classList.add('active');
+
+        // Specific Loaders
+        if (viewId === 'journal') window.loadJournal();
+    }
+};
+
+window.switchView = window.setView; // Alias for backward compatibility
+
+// Start at Dashboard
+window.setView('dashboard');

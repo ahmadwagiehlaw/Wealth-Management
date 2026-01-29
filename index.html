@@ -312,50 +312,7 @@
         </div>
     </section>
 
-    <section id="journal-section" class="view-section hidden">
-        <div class="container">
-            <div class="journal-header">
-                <div>
-                    <h2 class="section-title">Trading Journal</h2>
-                    <p class="section-subtitle">Learn from every trade</p>
-                </div>
-                <button class="btn-add-circle" onclick="window.showAddTradeModal()">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-            </div>
-
-            <!-- Stats Overview -->
-            <div class="journal-stats-row">
-                <div class="j-stat-card">
-                    <span class="j-label">Win Rate</span>
-                    <strong id="j-winrate">--%</strong>
-                </div>
-                <div class="j-stat-card">
-                    <span class="j-label">Avg R:R</span>
-                    <strong id="j-avg-rr">--</strong>
-                </div>
-                <div class="j-stat-card">
-                    <span class="j-label">Trades</span>
-                    <strong id="j-total-trades">0</strong>
-                </div>
-            </div>
-
-            <div class="journal-filters">
-                <button class="j-filter active" data-filter="ALL">All</button>
-                <button class="j-filter" data-filter="WIN">Wins</button>
-                <button class="j-filter" data-filter="LOSS">Losses</button>
-                <button class="j-filter" data-filter="OPEN">Active</button>
-            </div>
-
-            <div id="journal-timeline" class="journal-timeline">
-                <!-- Timeline items will be injected here -->
-                <div class="empty-state">
-                    <i class="fa-solid fa-book-open"></i>
-                    <p>No trades recorded yet. Start your journey!</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Old Journal Section Removed -->
 
     <section id="calculator-section" class="view-section hidden">
         <div class="container">
@@ -447,6 +404,252 @@
             <button class="btn-primary" style="background:var(--danger)" id="logout-btn-settings">تسجيل الخروج</button>
         </div>
     </section>
+
+    <!-- JOURNAL SECTION -->
+    <section id="journal-section" class="view-section hidden">
+        <div class="container">
+            <div class="journal-header">
+                <div>
+                    <h2 class="section-title">Trading Journal</h2>
+                    <p class="section-subtitle">إحصائيات & نفسية التداول</p>
+                </div>
+                <!-- "Start Campaign" Button -->
+                <button class="btn-add-circle" onclick="window.openNewCenterModal()">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="journal-stats-row">
+                <div class="j-stat-card">
+                    <span class="j-label">نسبة النجاح</span>
+                    <strong id="j-winrate">--%</strong>
+                </div>
+                <div class="j-stat-card">
+                    <span class="j-label">العائد للمخاطرة</span>
+                    <strong id="j-avg-rr">--</strong>
+                </div>
+                <div class="j-stat-card">
+                    <span class="j-label">إجمالي الصفقات</span>
+                    <strong id="j-total-trades">0</strong>
+                </div>
+            </div>
+
+            <div class="journal-filters">
+                <button class="j-filter active" data-filter="ALL" onclick="window.setJournalFilter('ALL')">الكل</button>
+                <button class="j-filter" data-filter="WIN" onclick="window.setJournalFilter('WIN')">رابحة</button>
+                <button class="j-filter" data-filter="LOSS" onclick="window.setJournalFilter('LOSS')">خاسرة</button>
+                <button class="j-filter" data-filter="OPEN" onclick="window.setJournalFilter('OPEN')">مفتوحة</button>
+            </div>
+            <!-- LEAKAGE HEATMAP (The Genius Addition) -->
+            <div class="glass-card leakage-card">
+                <div class="leakage-header"
+                    onclick="document.getElementById('leakage-list').classList.toggle('hidden'); this.querySelector('.fa-chevron-down').classList.toggle('rotate-180');"
+                    style="cursor:pointer">
+                    <h4><i class="fa-solid fa-fire text-danger"></i> تكلفة الأخطاء (Leakage)</h4>
+                    <i class="fa-solid fa-chevron-down transition-transform"></i>
+                </div>
+                <div id="leakage-list" class="leakage-list hidden">
+                    <!-- Dynamic Content will be injected here -->
+                    <div style="text-align:center; padding:10px; color:#888; font-size:0.8rem">
+                        حساب التكلفة يتطلب إغلاق صفقات خاسرة محددة كأخطاء
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h4 style="margin-bottom:15px; color:#ccc;">المراكز المفتوحة (Active Campaigns)</h4>
+            <div id="active-centers-list" class="centers-list">
+                <!-- Active Trade Centers Go Here -->
+                <div class="empty-state">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <p>لا توجد مراكز نشطة حالياً</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW CENTER MODAL (The War Room) -->
+    <dialog id="new-center-modal" class="modal">
+        <div class="modal-content glass-card input-modal">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-chess-knight"></i> فتح مركز جديد</h3>
+                <button onclick="document.getElementById('new-center-modal').close()" class="close-modal-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <input type="hidden" id="jc-edit-id">
+
+            <div class="input-group">
+                <div class="compact-grid">
+                    <input type="text" id="jc-asset" class="main-input" placeholder="الأصل (مثلاً GOLD, AAPL)">
+                    <select id="jc-direction" class="main-input">
+                        <option value="LONG">Long 🟢</option>
+                        <option value="SHORT">Short 🔴</option>
+                    </select>
+                </div>
+
+                <label>الاستراتيجية / السبب (Setup)</label>
+                <select id="jc-strategy" class="main-input">
+                    <option value="BREAKOUT">اختراق (Breakout)</option>
+                    <option value="REVERSAL">انعكاس (Reversal)</option>
+                    <option value="TREND_FOLLOWING">تتبع اتجاه (Trend Following)</option>
+                    <option value="NEWS">خبر (News Play)</option>
+                    <option value="OTHER">أخرى</option>
+                </select>
+
+                <textarea id="jc-thesis" class="main-input" rows="3"
+                    placeholder="لماذا تدخل هذه الصفقة؟ (Thesis)"></textarea>
+
+                <div class="compact-grid">
+                    <input type="number" id="jc-stop" class="main-input" placeholder="وقف الخسارة (Stop Loss)">
+                    <input type="number" id="jc-target" class="main-input" placeholder="الهدف (Take Profit)">
+                </div>
+            </div>
+
+            <button id="btn-save-center" class="btn-primary w-100" onclick="window.submitNewCenter()">فتح
+                المركز</button>
+        </div>
+    </dialog>
+
+    <!-- ADD EXECUTION MODAL (Log Trade) -->
+    <dialog id="add-execution-modal" class="modal">
+        <div class="modal-content glass-card input-modal">
+            <div class="modal-header">
+                <h3 id="add-execution-title"><i class="fa-solid fa-pen-to-square"></i> تسجيل تنفيذ</h3>
+                <button onclick="document.getElementById('add-execution-modal').close()" class="close-modal-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <input type="hidden" id="exec-center-id">
+            <input type="hidden" id="exec-edit-id">
+
+            <div class="input-group">
+                <!-- Portfolio Selection -->
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size:0.8rem; color:#aaa; display:block; margin-bottom:4px;">المحفظة
+                        (Portfolio)</label>
+                    <select id="exec-portfolio" class="main-input">
+                        <option value="NONE">بدون محفظة (Global)</option>
+                        <!-- Options populated via JS -->
+                    </select>
+                </div>
+
+                <div class="compact-grid">
+                    <select id="exec-type" class="main-input">
+                        <optgroup label="Drying In (Dukhul)">
+                            <option value="OPEN">فتح مركز (Open Position)</option>
+                            <option value="ADD">تعزيز - مع الاتجاه (Add to Winner)</option>
+                            <option value="AVERAGE">توسط - تبريد (Average Down)</option>
+                        </optgroup>
+                        <optgroup label="Taking Profit (Ribh)">
+                            <option value="TP_PARTIAL">جني أرباح جزئي (Partial TP)</option>
+                            <option value="TP_FULL">إغلاق بربح (Full Profit)</option>
+                        </optgroup>
+                        <optgroup label="Cutting Loss (Khasara)">
+                            <option value="SL_PARTIAL">وقف خسارة جزئي (Partial Stop)</option>
+                            <option value="SL_FULL">وقف خسارة كامل (Stop Loss)</option>
+                            <option value="CUT_EARLY">خروج يدوي مبكر (Cut Early)</option>
+                        </optgroup>
+                    </select>
+                    <input type="date" id="exec-date" class="main-input">
+                </div>
+
+                <div class="compact-grid">
+                    <input type="number" id="exec-price" class="main-input" placeholder="السعر">
+                    <input type="number" id="exec-qty" class="main-input" placeholder="الكمية">
+                </div>
+
+                <hr style="border-color:rgba(255,255,255,0.1); margin:15px 0;">
+
+                <label><i class="fa-solid fa-brain text-purple"></i> الحالة النفسية (Psychology)</label>
+                <div class="tags-container">
+                    <div class="tag-check">
+                        <input type="checkbox" id="tag-fomo" value="FOMO">
+                        <label for="tag-fomo">FOMO 😱</label>
+                    </div>
+                    <div class="tag-check">
+                        <input type="checkbox" id="tag-revenge" value="REVENGE">
+                        <label for="tag-revenge">انتقام 😡</label>
+                    </div>
+                    <div class="tag-check">
+                        <input type="checkbox" id="tag-calm" value="CALM">
+                        <label for="tag-calm">هادئ 🧘‍♂️</label>
+                    </div>
+                    <div class="tag-check">
+                        <input type="checkbox" id="tag-rushed" value="RUSHED">
+                        <label for="tag-rushed">استعجال 🏃</label>
+                    </div>
+                    <div class="tag-check">
+                        <input type="checkbox" id="tag-hesitant" value="HESITANT">
+                        <label for="tag-hesitant">تردد 😬</label>
+                    </div>
+                    <div class="tag-check">
+                        <input type="checkbox" id="tag-bored" value="BORED">
+                        <label for="tag-bored">ملل 🥱</label>
+                    </div>
+                    <div class="tag-check">
+                        <input type="checkbox" id="tag-confident" value="CONFIDENT">
+                        <label for="tag-confident">واثق 😎</label>
+                    </div>
+                </div>
+
+                <div id="mistake-section" style="margin-top:10px;">
+                    <label>هل كان خطأ؟ (Mistake Cost)</label>
+                    <select id="exec-mistake" class="main-input">
+                        <option value="NONE">لا، تنفيذ سليم ✅</option>
+
+                        <optgroup label="Psychological Errors">
+                            <option value="FOMO">FOMO (خوف فوات الفرصة)</option>
+                            <option value="REVENGE">Revenge Trading (تجارة انتقامية)</option>
+                            <option value="GAMBLING">Gambling (مقامرة بدون تحليل)</option>
+                            <option value="HESITATION">Hesitation (تردد في الدخول)</option>
+                            <option value="EARLY_EXIT">Early Exit (خروج مبكر خوفاً)</option>
+                        </optgroup>
+
+                        <optgroup label="Technical Errors">
+                            <option value="NO_STRATEGY">No Strategy (دخول عشوائي)</option>
+                            <option value="BAD_ENTRY">Bad Entry (دخول متأخر/سيء)</option>
+                            <option value="WIDE_STOP">Wide Stop (وقف خسارة كبير)</option>
+                            <option value="OVERSIZING">Oversizing (حجم صفقة كبير)</option>
+                        </optgroup>
+
+                        <optgroup label="Other Errors">
+                            <option value="FAT_FINGER">Fat Finger (خطأ كتابي)</option>
+                            <option value="NEWS_PANIC">News Panic (هلع أخبار)</option>
+                            <option value="TECH_ISSUE">Technical Issue (عطل منصة/نت)</option>
+                            <option value="BAD_ADVICE">Bad Advice (توصية فاشلة)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+            </div>
+
+            <button id="btn-save-exec" class="btn-primary w-100" onclick="window.submitExecution()">تسجيل</button>
+        </div>
+    </dialog>
+
+    <!-- REVIEW TIMELINE MODAL (The Story) -->
+    <dialog id="review-timeline-modal" class="modal">
+        <div class="modal-content glass-card input-modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> سجل التداولات (Timeline)</h3>
+                <button onclick="document.getElementById('review-timeline-modal').close()" class="close-modal-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="timeline-container" class="timeline-container">
+                <!-- Dynamic Timeline Items -->
+                <div class="empty-state">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>جاري تحميل السجل...</p>
+                </div>
+            </div>
+        </div>
+    </dialog>
 
     <nav class="glass-dock" id="main-nav">
         <button class="nav-item active" id="nav-home"><i class="fa-solid fa-house"></i></button>
