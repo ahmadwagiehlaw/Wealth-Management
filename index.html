@@ -318,14 +318,257 @@
     </section>
 
     <!-- CALCULATOR SECTION -->
-    <section id="calculator-section" class="view-section hidden">
-        <div class="container">
-            <div class="tools-header">
-                <div>
-                    <h2 class="section-title">أدوات التداول</h2>
-                    <p class="section-subtitle">حاسبات، تحليل، وإدارة مخاطر</p>
+    <!-- ALLOCATION SECTION (Smart Portfolio Allocator) -->
+    <section id="allocation-section" class="view-section hidden">
+        <header class="app-header portfolio-header">
+            <!-- Left: Actions Group -->
+            <div class="header-actions">
+                <button class="btn-icon-header" onclick="window.setView('dashboard')" title="العودة">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button class="btn-icon-header text-danger" onclick="window.resetAllocationData()"
+                    title="تصفير البيانات">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+                <button class="btn-icon-header" onclick="window.openStrategySettings()" title="الإعدادات">
+                    <i class="fa-solid fa-sliders"></i>
+                </button>
+            </div>
+
+            <!-- Right: Title -->
+            <h1 class="page-title">
+                إدارة المحفظة
+                <i class="fa-solid fa-briefcase"></i>
+            </h1>
+        </header>
+
+        <!-- STRATEGY SETTINGS MODAL -->
+        <dialog id="strategy-settings-modal" class="modal">
+            <div class="modal-content glass-card">
+                <div class="modal-header">
+                    <h3>⚙️ إعدادات الاستراتيجية</h3>
+                    <button onclick="document.getElementById('strategy-settings-modal').close()"
+                        class="close-modal-btn">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="input-group">
+                    <label>رأس المال المستهدف (Capital)</label>
+                    <input type="number" id="st-total-capital" class="main-input" placeholder="0.00">
+                    <small style="color:#888; display:block; margin-top:5px;">سيتم استخدامه لحساب نسب التوزيع</small>
+                </div>
+
+                <div class="input-group">
+                    <label>النمط الاستثماري (Risk Profile)</label>
+                    <div class="segmented-control-modern" style="margin-top:5px;">
+                        <button class="sc-btn" onclick="window.setRiskProfile('DEFENSIVE', this)">
+                            <span class="sc-label">دفاعي 🛡️</span>
+                        </button>
+                        <button class="sc-btn active" onclick="window.setRiskProfile('BALANCED', this)">
+                            <span class="sc-label">متوازن ⚖️</span>
+                        </button>
+                        <button class="sc-btn" onclick="window.setRiskProfile('AGGRESSIVE', this)">
+                            <span class="sc-label">هجومي 🚀</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="two-col-grid">
+                    <div class="input-group">
+                        <label>نسبة الكاش المستهدفة %</label>
+                        <input type="number" id="st-cash-target" class="main-input" placeholder="مثلاً 20">
+                    </div>
+                    <div class="input-group">
+                        <label>الحد الأقصى للسهم %</label>
+                        <input type="number" id="st-max-asset" class="main-input" placeholder="مثلاً 15">
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-primary w-100" onclick="window.saveStrategySettings()">حفظ الإعدادات</button>
                 </div>
             </div>
+        </dialog>
+
+        <div class="container" style="padding-bottom: 80px;">
+            <!-- Compact Top Stats Row (Journal Style) -->
+            <div class="lab-stats-row">
+                <div class="lab-stat-card">
+                    <span class="lab-stat-val" id="dash-total-cap">100K</span>
+                    <span class="lab-stat-lbl">رأس المال</span>
+                </div>
+                <div class="lab-stat-card">
+                    <span class="lab-stat-val text-success" id="dash-actual-exec">11K</span>
+                    <span class="lab-stat-lbl">المُستثمر</span>
+                </div>
+                <div class="lab-stat-card">
+                    <span class="lab-stat-val" id="dash-compliance" style="color:var(--gold)">11%</span>
+                    <span class="lab-stat-lbl">نسبة الالتزام</span>
+                </div>
+            </div>
+
+            <!-- Chart + Legend Row -->
+            <div class="glass-card lab-chart-section">
+                <div class="lab-chart-grid">
+                    <!-- Pie Chart (Compact) -->
+                    <div class="lab-chart-wrapper">
+                        <canvas id="allocationChart"></canvas>
+                        <div class="chart-center-overlay">
+                            <div style="font-size:0.55rem; color:#888;">المستخدم</div>
+                            <div id="big-utilized-pct" style="font-size:1.2rem; font-weight:bold; color:#fff;">0%</div>
+                        </div>
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="lab-chart-legend" id="chart-legend">
+                        <!-- Will be populated dynamically -->
+                        <div class="legend-item"><span class="legend-dot" style="background:#ff6b6b"></span><span
+                                class="legend-label">سيولة</span><span class="legend-val">89%</span></div>
+                        <div class="legend-item"><span class="legend-dot" style="background:#4ecdc4"></span><span
+                                class="legend-label">الألب</span><span class="legend-val">11%</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Coach Panel (Feedback) -->
+            <div id="coach-panel" class="glass-card full-width hidden" style="border-right: 4px solid var(--gold);">
+                <div style="display:flex; gap:10px; align-items:start;">
+                    <i class="fa-solid fa-user-tie" style="font-size:1.5rem; color:var(--gold); margin-top:5px;"></i>
+                    <div>
+                        <h4 style="margin:0 0 5px; color:var(--gold);">نصائح المستشار الذكي</h4>
+                        <ul id="coach-tips"
+                            style="margin:0; padding-right:20px; font-size:0.9rem; color:#ddd; line-height:1.6;">
+                            <!-- Dynamic Tips -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy Board -->
+            <div class="section-header" style="margin-top:25px;">
+                <h3>خطة الأصول</h3>
+                <button class="btn-add-stylish" onclick="window.addNewAssetStrategy()">
+                    <i class="fa-solid fa-plus"></i> إضافة أصل
+                </button>
+            </div>
+
+            <div id="strategy-list" class="strategy-list">
+                <!-- Strategy Cards will be injected here -->
+                <div class="empty-state">
+                    <i class="fa-solid fa-flask empty-icon" style="color:var(--primary); opacity:0.5;"></i>
+                    <p style="color:#aaa;">المختبر فارغ حالياً.<br>ابدأ بإضافة الأصول لتبني خطتك الاستثمارية.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Asset Strategy Modal -->
+    <dialog id="strategy-modal" class="modal">
+        <div class="modal-content glass-card">
+            <button onclick="document.getElementById('strategy-modal').close()" class="close-modal-btn"
+                style="position:absolute; left:20px; top:20px;">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3>تعديل توزيع الأصل</h3>
+
+            <div class="input-group">
+                <label>اسم الأصل / السهم</label>
+                <input type="text" id="strat-name" class="main-input_clean" placeholder="مثلاً: CIB, Gold..."
+                    style="font-weight:bold; font-size:1.1rem;">
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- TARGET SECTION -->
+            <h4 style="font-size:0.9rem; color:var(--primary); margin-bottom:10px;">🎯 المستهدف (Target)</h4>
+            <div class="input-group">
+                <label>الوزن النسبي في المحفظة</label>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <input type="range" id="strat-slider" min="0" max="100" step="1" class="slider-modern"
+                        style="flex:1" oninput="window.syncStrategyInputs('slider')">
+                    <div style="position:relative; width:80px;">
+                        <input type="number" id="strat-percent" class="main-input"
+                            style="padding-left:25px; text-align:center;"
+                            oninput="window.syncStrategyInputs('percent')">
+                        <span
+                            style="position:absolute; left:5px; top:50%; transform:translateY(-50%); color:#888;">%</span>
+                    </div>
+                </div>
+                <!-- Calculated Amount Display -->
+                <div style="text-align:left; font-size:0.8rem; color:#aaa; margin-top:5px;">
+                    القيمة المستهدفة: <span id="strat-calc-target-amount" class="text-white">0</span> <small>EGP</small>
+                </div>
+                <!-- Hidden Input for Logic Compatibility -->
+                <input type="hidden" id="strat-amount">
+            </div>
+
+            <div class="section-divider"></div>
+
+            <!-- EXECUTION SECTION -->
+            <h4 style="font-size:0.9rem; color:var(--success); margin-bottom:10px;">🚀 التنفيذ الفعلي (Execution)</h4>
+
+            <div class="input-group">
+                <label style="display:flex; justify-content:space-between;">
+                    <span>مستوى الدخول (Scaling In)</span>
+                    <span id="exec-slider-val" style="color:var(--success)">0%</span>
+                </label>
+                <input type="range" id="exec-slider" min="0" max="100" step="5" class="slider-modern slider-success"
+                    oninput="window.syncExecutionInputs('slider')">
+                <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:#666; margin-top:2px;">
+                    <span>0%</span>
+                    <span>25%</span>
+                    <span>50%</span>
+                    <span>75%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>قيمة التنفيذ الحالية (Cash Deployed)</label>
+                <div style="position:relative;">
+                    <input type="number" id="strat-actual-manual" class="main-input" placeholder="0.00"
+                        oninput="window.syncExecutionInputs('input')" style="border-color:var(--success);">
+                    <span
+                        style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#888;">EGP</span>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="input-group">
+                <label>ملاحظات (قواعد الدخول/الخروج)</label>
+                <textarea id="strat-notes" class="main-input" rows="2"
+                    placeholder="مثلاً: شراء مبدئي 30%، والتعزيز عند اختراق 50..."></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-text text-danger" style="width:auto" onclick="window.deleteStrategyItem()">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+                <button class="btn-primary" onclick="window.saveStrategyItem()">
+                    <i class="fa-solid fa-check"></i> حفظ التعديلات
+                </button>
+            </div>
+        </div>
+    </dialog>
+    </section>
+
+    <!-- CALCULATOR SECTION -->
+    <section id="calculator-section" class="view-section hidden">
+        <header class="app-header portfolio-header">
+            <div class="header-actions">
+                <button class="btn-icon-header" onclick="window.setView('dashboard')" title="العودة">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+            <h1 class="page-title">
+                أدوات التداول
+                <i class="fa-solid fa-calculator"></i>
+            </h1>
+        </header>
+        <div class="container">
 
             <!-- Modern Segmented Control -->
             <div class="glass-card compact-card" style="padding: 8px; margin-bottom: 20px;">
@@ -571,13 +814,19 @@
 
     <!-- LESSONS SECTION (Trading Academy) -->
     <section id="lessons-section" class="view-section hidden">
-        <header class="app-header" style="justify-content: space-between; direction: ltr;">
-            <button class="btn-icon" onclick="window.setView('dashboard')"
-                style="background:rgba(255,255,255,0.1); width:40px; height:40px; border-radius:12px;">
-                <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <h1 class="logo-text" style="font-size:1.5rem; order:2;">أكاديمية التداول <i
-                    class="fa-solid fa-graduation-cap"></i></h1>
+        <header class="app-header portfolio-header">
+            <!-- Left: Actions Group -->
+            <div class="header-actions">
+                <button class="btn-icon-header" onclick="window.setView('dashboard')" title="العودة">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+
+            <!-- Right: Title -->
+            <h1 class="page-title">
+                أكاديمية التداول
+                <i class="fa-solid fa-graduation-cap"></i>
+            </h1>
         </header>
 
         <div class="content-container">
@@ -684,31 +933,27 @@
                         ✅</button>
                 </div>
             </div>
-
-            <!-- History -->
-            <div class="glass-card full-width" style="margin-top:20px">
-                <h3 class="section-title" style="font-size:1.2rem; margin-bottom:15px">سجل الاستراتيجيات</h3>
-                <div id="strategy-history-list" class="transaction-list">
-                    <div class="empty-state">
-                        <p>لا توجد خطط محفوظة بعد</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
     <!-- JOURNAL SECTION -->
     <section id="journal-section" class="view-section hidden">
-        <div class="container">
-            <div class="journal-header">
-                <div class="journal-title-box">
-                    <h2>سجل الصفقات</h2>
-                    <p>إدارة صفقاتك وتحليل الأداء</p>
-                </div>
-                <button class="btn-add-journal" onclick="window.openNewCenterModal()">
+        <header class="app-header portfolio-header">
+            <div class="header-actions">
+                <button class="btn-icon-header" onclick="window.setView('dashboard')" title="العودة">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <button class="btn-icon-header" style="background:var(--success); color:#fff;"
+                    onclick="window.openNewCenterModal()" title="إضافة صفقة">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
+            <h1 class="page-title">
+                سجل الصفقات
+                <i class="fa-solid fa-book-open"></i>
+            </h1>
+        </header>
+        <div class="container">
 
             <div class="journal-stats-row">
                 <div class="j-stat-card">
@@ -875,8 +1120,18 @@
     </dialog>
 
     <section id="settings-section" class="view-section hidden">
+        <header class="app-header portfolio-header">
+            <div class="header-actions">
+                <button class="btn-icon-header" onclick="window.setView('dashboard')" title="العودة">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+            </div>
+            <h1 class="page-title">
+                الإعدادات
+                <i class="fa-solid fa-gear"></i>
+            </h1>
+        </header>
         <div class="container">
-            <h3>الإعدادات</h3>
             <div class="glass-card">
                 <button class="btn-primary" onclick="window.exportBackup()"
                     style="margin-bottom:10px; background:#2c2c2e">
@@ -899,6 +1154,10 @@
         </button>
         <button class="nav-item" id="nav-calculator" onclick="window.setView('calculator')">
             <i class="fa-solid fa-calculator"></i>
+        </button>
+        <button class="nav-item" id="nav-allocation"
+            onclick="window.loadAllocationView(); window.setView('allocation')">
+            <i class="fa-solid fa-chart-pie"></i>
         </button>
         <button class="nav-item" id="nav-journal" onclick="window.setView('journal')">
             <i class="fa-solid fa-book-journal-whills"></i>
@@ -932,14 +1191,14 @@
         </div>
     </dialog>
 
-    <script type="module" src="app.js"></script>
+    <script type="module" src="app.js?v=RC2"></script>
 
     <script>
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('SW Registered!', reg))
-                    .catch(err => console.log('SW Failed:', err));
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    registration.unregister().then(r => console.log("SW Unregistered due to debugging", r));
+                }
             });
         }
     </script>

@@ -1,0 +1,170 @@
+/* Strategy Visual Cards */
+.alloc-card-visual {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    /* More subtle border */
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 12px;
+    position: relative;
+    transition: all 0.3s ease;
+    /* overflow: hidden; Removed to allow markers to popup if needed */
+}
+
+/* Hover Effect for "Active Planning" */
+.alloc-card-visual:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.alloc-card-visual.near-limit {
+    border-color: rgba(255, 59, 48, 0.3);
+    /* Subtle Red Border */
+    background: linear-gradient(to right, rgba(255, 59, 48, 0.05), rgba(255, 255, 255, 0.02));
+}
+
+.card-visual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.card-title-group {
+    flex-grow: 1;
+}
+
+.card-title-group h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.badge-pill {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    margin-top: 3px;
+    display: inline-block;
+}
+
+/* Progress Container */
+.visual-progress-container {
+    margin-bottom: 15px;
+}
+
+.vp-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.vp-track {
+    height: 8px;
+    /* Thicker track */
+    background: rgba(255, 255, 255, 0.05);
+    /* Very dim track */
+    border-radius: 4px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.vp-fill {
+    height: 100%;
+    border-radius: 4px;
+    position: relative;
+    /* Stripe pattern for visual texture */
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+}
+
+/* Markers */
+.vp-target-marker {
+    position: absolute;
+    top: -4px;
+    /* Pop out */
+    height: 14px;
+    width: 2px;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    z-index: 2;
+}
+
+.vp-ceiling-marker {
+    position: absolute;
+    top: -4px;
+    height: 14px;
+    width: 2px;
+    background: var(--danger);
+    border-right: 2px solid var(--danger);
+    /* Make it thicker */
+    opacity: 0.7;
+    z-index: 1;
+}
+
+/* Stats Grid */
+.card-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 10px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-item .lbl {
+    font-size: 0.65rem;
+    color: #777;
+    margin-bottom: 2px;
+}
+
+.stat-item .val {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #eee;
+}
+
+.text-success {
+    color: var(--success) !important;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
+}
+
+.text-danger {
+    color: var(--danger) !important;
+}
+
+/* Modal Inputs for Manual Actual */
+#strat-actual-manual {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#strat-actual-manual:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(10, 132, 255, 0.2);
+}

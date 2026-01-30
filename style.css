@@ -625,9 +625,10 @@ dialog.modal {
     background: transparent;
     border: none;
     padding: 0;
+    max-width: 90vw;
+    width: 100%;
     margin: auto;
-    max-width: 90%;
-    width: 400px;
+    /* Ensure native centering */
     color: white;
     overflow: visible;
 }
@@ -2897,7 +2898,9 @@ input[type="date"] {
 /* Tab Icon fix */
 .seg-btn i {
     margin-left: 5px;
-}/* === 11. Enhanced Trading Tools Styles === */
+}
+
+/* === 11. Enhanced Trading Tools Styles === */
 
 /* Header */
 .tools-header {
@@ -3745,7 +3748,9 @@ input[type="date"] {
     color: var(--text-secondary);
     margin-bottom: 10px;
     text-transform: uppercase;
-}/* --- Lessons / Strategy Academy --- */
+}
+
+/* --- Lessons / Strategy Academy --- */
 #lessons-section {
     padding-bottom: 80px;
 }
@@ -4018,17 +4023,21 @@ select.main-input {
     background-repeat: no-repeat;
     background-position: left 0.7rem top 50%;
     background-size: 0.65rem auto;
-    padding-left: 30px; /* Space for arrow in RTL */
+    padding-left: 30px;
+    /* Space for arrow in RTL */
 }
 
 /* 2. Enhanced Glass Navbar */
 .bottom-nav {
-    background: rgba(20, 20, 20, 0.75) !important; /* Start with semi-transparent black */
-    backdrop-filter: blur(25px) saturate(180%) !important; /* Heavy blur & saturation */
+    background: rgba(20, 20, 20, 0.75) !important;
+    /* Start with semi-transparent black */
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    /* Heavy blur & saturation */
     -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3) !important;
-    height: 75px !important; /* Slightly more compact */
+    height: 75px !important;
+    /* Slightly more compact */
 }
 
 .nav-item {
@@ -4055,19 +4064,25 @@ select.main-input {
     #lessons-section .content-container {
         padding: 10px !important;
     }
-    
+
     .wizard-step {
         padding: 5px;
     }
-    
-    .input-group, .two-col-grid {
+
+    .input-group,
+    .two-col-grid {
         margin-bottom: 12px;
     }
 }
 
 
 /* === ENFORCED GLOBAL DARK GLASS INPUTS === */
-input, textarea, select, .main-input, .modern-input, .search-bar input {
+input,
+textarea,
+select,
+.main-input,
+.modern-input,
+.search-bar input {
     width: 100%;
     background: rgba(0, 0, 0, 0.4) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -4078,13 +4093,15 @@ input, textarea, select, .main-input, .modern-input, .search-bar input {
     font-size: 0.95rem;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     outline: none;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
     background: rgba(10, 132, 255, 0.1) !important;
     border-color: var(--primary) !important;
-    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.15), inset 0 1px 2px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.15), inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
     transform: translateY(-1px);
 }
 
@@ -4105,10 +4122,10 @@ select {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,0,0,0.2));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.2));
     padding: 20px;
     border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .journal-title-box h2 {
@@ -4152,8 +4169,8 @@ select {
 }
 
 .j-stat-card {
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 15px;
     border-radius: 16px;
     text-align: center;
@@ -4196,7 +4213,7 @@ select {
 }
 
 #btn-cat-back {
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
     border: none;
     width: 40px;
@@ -4211,8 +4228,9 @@ select {
 }
 
 #btn-cat-back:hover {
-    background: rgba(255,255,255,0.2);
-    transform: translateX(3px); /* RTL Arrow Logic */
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(3px);
+    /* RTL Arrow Logic */
 }
 
 
@@ -4282,3 +4300,671 @@ select {
     background: rgba(255, 255, 255, 0.1);
 }
 
+/* Strategy Visual Cards */
+.alloc-card-visual {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 12px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.alloc-card-visual:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.alloc-card-visual.near-limit {
+    border-color: rgba(255, 59, 48, 0.3);
+    background: linear-gradient(to right, rgba(255, 59, 48, 0.05), rgba(255, 255, 255, 0.02));
+}
+
+.card-visual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-right: 12px;
+    flex-shrink: 0;
+}
+
+.card-title-group {
+    flex-grow: 1;
+}
+
+.card-title-group h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.badge-pill {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #aaa;
+    margin-top: 3px;
+    display: inline-block;
+}
+
+/* Progress Container */
+.visual-progress-container {
+    margin-bottom: 15px;
+}
+
+.vp-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.vp-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.vp-fill {
+    height: 100%;
+    border-radius: 4px;
+    position: relative;
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
+    background-size: 1rem 1rem;
+}
+
+/* Markers */
+.vp-target-marker {
+    position: absolute;
+    top: -4px;
+    height: 14px;
+    width: 2px;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+    z-index: 2;
+}
+
+.vp-ceiling-marker {
+    position: absolute;
+    top: -4px;
+    height: 14px;
+    width: 2px;
+    background: var(--danger);
+    border-right: 2px solid var(--danger);
+    opacity: 0.7;
+    z-index: 1;
+}
+
+/* Stats Grid */
+.card-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 10px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-item .lbl {
+    font-size: 0.65rem;
+    color: #777;
+    margin-bottom: 2px;
+}
+
+.stat-item .val {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #eee;
+}
+
+.text-success {
+    color: var(--success) !important;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
+}
+
+.text-danger {
+    color: var(--danger) !important;
+}
+
+/* Modal Inputs for Manual Actual */
+#strat-actual-manual {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#strat-actual-manual:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(10, 132, 255, 0.2);
+}
+
+/* --- VIRTUAL STRATEGY LAB REDESIGN --- */
+
+/* 1. Dashboard Grid (DNA) */
+/* 1. Dashboard Grid (DNA) */
+.dna-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    /* More space for stats, but chart needs presence */
+    gap: 20px;
+    align-items: center;
+    direction: rtl;
+    /* Enforce RTL layout here explicitly */
+}
+
+/* On Desktop: Chart is Left (End), Stats Right (Start) */
+/* stats is first child -> Right */
+/* chart is second child -> Left */
+
+.dna-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* More breathing room */
+    padding: 10px;
+}
+
+.dna-chart-wrapper {
+    position: relative;
+    height: 220px;
+    /* Increased Height for visibility */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Optional: Add subtle glow behind chart */
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.chart-center-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Mobile: Stack them */
+@media (max-width: 480px) {
+    .dna-dashboard-grid {
+        grid-template-columns: 1fr;
+        /* Stack on mobile */
+        gap: 25px;
+    }
+
+    .dna-stats {
+        order: 2;
+        /* Stats below chart */
+    }
+
+    .dna-chart-wrapper {
+        order: 1;
+        height: 200px;
+    }
+}
+
+/* 2. Modern Inputs & Clean Style */
+.main-input_clean {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #333;
+    color: #fff;
+    padding: 10px 5px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    border-radius: 0;
+}
+
+.main-input_clean:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* 3. Success (Execution) Slider */
+.slider-success {
+    accent-color: var(--success) !important;
+}
+
+/* 4. Asset Card "Candles/Stages" */
+.alloc-card-visual {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.alloc-card-visual:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.card-visual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-title-group h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.badge-pill {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #aaa;
+    font-family: 'Inter', sans-serif;
+}
+
+.icon-box-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+}
+
+.btn-icon-sm {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background 0.2s;
+}
+
+.btn-icon-sm:hover {
+    background: var(--primary);
+}
+
+/* Stage Progress Bar */
+.stage-container {
+    margin: 15px 0;
+}
+
+.vp-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.stage-track {
+    height: 10px;
+    background: #252525;
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Target Area (The Goal) */
+.stage-target-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    /* width set inline based on target % */
+    border-right: 2px solid #555;
+    z-index: 1;
+}
+
+/* Fill (The Execution) */
+.stage-fill {
+    height: 100%;
+    /* width set inline based on execution % */
+    background: var(--success);
+    border-radius: 5px;
+    position: relative;
+    z-index: 2;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Markers */
+.stage-marker {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 3;
+}
+
+/* Detail Stats Grid */
+.detail-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+}
+
+.ds-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.ds-lbl {
+    font-size: 0.7rem;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.ds-val {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #eee;
+    font-family: 'Inter', sans-serif;
+    direction: ltr;
+    /* Numbers LTR */
+}
+
+/* Card Actions Overlay (Optional) */
+.card-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* ===== LAB PAGE REDESIGN ===== */
+
+/* Stats Row (Journal-Style) */
+.lab-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.lab-stat-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.lab-stat-val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    direction: ltr;
+}
+
+.lab-stat-lbl {
+    font-size: 0.65rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Chart Section */
+.lab-chart-section {
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.lab-chart-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    align-items: center;
+}
+
+.lab-chart-wrapper {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.lab-chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Chart Legend */
+.lab-chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.legend-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-label {
+    flex: 1;
+    font-size: 0.8rem;
+    color: #ccc;
+    text-align: right;
+}
+
+.legend-val {
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    direction: ltr;
+}
+
+/* ===== PORTFOLIO PAGE HEADER ===== */
+.portfolio-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    direction: ltr;
+    /* Important for correct left/right order */
+    padding: 15px 20px;
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.1), transparent);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 15px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-icon-header {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ccc;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.btn-icon-header:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.btn-icon-header.text-danger {
+    background: rgba(255, 69, 58, 0.12);
+    color: var(--danger);
+}
+
+.btn-icon-header.text-danger:hover {
+    background: rgba(255, 69, 58, 0.25);
+}
+
+.page-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    direction: rtl;
+}
+
+.page-title i {
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+/* ===== IMPROVED CHART SECTION ===== */
+.lab-chart-section {
+    padding: 20px;
+    margin-bottom: 20px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.1));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.lab-chart-grid {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 25px;
+    align-items: center;
+}
+
+.lab-chart-wrapper {
+    position: relative;
+    width: 130px;
+    height: 130px;
+}
+
+.lab-chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-center-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+}
+
+/* ===== IMPROVED LEGEND ===== */
+.lab-chart-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition: all 0.2s;
+}
+
+.legend-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.legend-label {
+    flex: 1;
+    font-size: 0.85rem;
+    color: #ddd;
+    text-align: right;
+}
+
+.legend-val {
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    direction: ltr;
+    min-width: 40px;
+    text-align: left;
+}
+
+/* End of Styles */
