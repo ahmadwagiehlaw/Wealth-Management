@@ -35,12 +35,19 @@ window.setView = (viewName) => {
     document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
     document.getElementById(`${viewName}-section`)?.classList.remove('hidden');
 
+    const nav = document.getElementById('main-nav');
+    if (nav) {
+        // Force flex display if not auth, otherwise hide
+        nav.style.display = (viewName === 'auth') ? 'none' : 'flex';
+    }
+
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     const navMap = {
         'dashboard': 'home',
         'details': 'home',
         'journal': 'journal',
         'calculator': 'calculator',
+        'lessons': 'lessons',
         'settings': 'settings'
     };
     const navBtn = document.getElementById(`nav-${navMap[viewName] || 'home'}`);
@@ -2180,6 +2187,16 @@ window.renderJournalList = () => {
 
         div.setAttribute('onclick', `window.toggleCenterDetails('${safeId}', this)`);
 
+        // Translation Map
+        const stratMap = {
+            'BREAKOUT': 'اختراق (Breakout)',
+            'REVERSAL': 'انعكاس (Reversal)',
+            'TREND_FOLLOWING': 'تتبع اتجاه (Trend)',
+            'NEWS': 'تداول أخبار',
+            'OTHER': 'أخرى'
+        };
+        const stratLabel = stratMap[faceCenter.strategy] || faceCenter.strategy;
+
         div.innerHTML = `
             <div class="center-header">
                 <div class="ch-left">
@@ -2188,7 +2205,8 @@ window.renderJournalList = () => {
                 </div>
                 <div class="ch-right">
                     <!-- Add Trade Button Here (Header) -->
-                    <button class="icon-btn-sm btn-header-add" onclick="event.stopPropagation(); window.showAddExecModal('${group.latestCenterId}')" title="صفقة جديدة">
+                    <button class="icon-btn-sm btn-header-add" style="background:var(--success); color:#fff; width:32px; height:32px; border-radius:50%;" 
+                        onclick="event.stopPropagation(); window.showAddExecModal('${group.latestCenterId}')" title="صفقة جديدة">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                     <div class="ch-pnl">
@@ -2214,7 +2232,7 @@ window.renderJournalList = () => {
                 </div>
                  <div class="cb-row">
                     <span class="cb-label">الاستراتيجية:</span>
-                    <span class="cb-val text-muted">${faceCenter.strategy || '-'}</span>
+                    <span class="cb-val text-muted">${stratLabel}</span>
                 </div>
             </div>
 
@@ -2837,7 +2855,7 @@ window.calcAverage = () => {
     document.getElementById('avg-result').innerText = newAvg.toFixed(2);
 };
 
-// 3. Risk & Position Sizing Calculator
+// 3. Risk & Position Sizing Calculator (Enhanced)
 window.calcRR = () => {
     const entry = parseFloat(document.getElementById('rr-entry').value) || 0;
     const target = parseFloat(document.getElementById('rr-target').value) || 0;
@@ -2848,6 +2866,27 @@ window.calcRR = () => {
     const lossEl = document.getElementById('rr-loss');
     const ratioEl = document.getElementById('rr-ratio');
     const qtyEl = document.getElementById('rr-qty');
+
+    // Elements for Visualizer (Ensure they exist in HTML)
+    const barProfit = document.getElementById('rr-bar-profit');
+    const barLoss = document.getElementById('rr-bar-loss');
+    const labelProfit = document.getElementById('label-profit');
+    const labelLoss = document.getElementById('label-loss');
+
+    // Message Container (Create if missing)
+    let msgBox = document.getElementById('rr-message-box');
+    if (!msgBox) {
+        msgBox = document.createElement('div');
+        msgBox.id = 'rr-message-box';
+        msgBox.className = 'glass-card compact-card';
+        msgBox.style.marginTop = '15px';
+        msgBox.style.fontSize = '0.85rem';
+        msgBox.style.lineHeight = '1.6';
+        msgBox.style.display = 'none';
+        // Insert after the result grid
+        const parent = document.querySelector('#calc-risk .glass-card');
+        if (parent) parent.appendChild(msgBox);
+    }
 
     if (!entry) return;
 
@@ -2861,27 +2900,69 @@ window.calcRR = () => {
     const riskPer = (risk / entry) * 100;
     const rewardPer = (reward / entry) * 100;
 
-    profitEl.innerText = target ? `+${rewardPer.toFixed(1)}%` : '0%';
-    lossEl.innerText = stop ? `-${riskPer.toFixed(1)}%` : '0%';
+    if (profitEl) profitEl.innerText = target ? `+${rewardPer.toFixed(1)}%` : '0%';
+    if (lossEl) lossEl.innerText = stop ? `-${riskPer.toFixed(1)}%` : '0%';
 
-    // R:R Ratio
+    // R:R Ratio & Tips
+    let recommendation = "";
+
     if (risk > 0 && reward > 0) {
         const r = reward / risk;
         ratioEl.innerText = `1 : ${r.toFixed(1)}`;
-        ratioEl.style.color = r >= 2 ? 'var(--success)' : (r < 1 ? 'var(--danger)' : 'var(--text-color)');
+
+        if (r >= 3) {
+            ratioEl.style.color = 'var(--gold)';
+            recommendation = "🌟 **صفقة ممتازة!** العائد المتوقع 3 أضعاف المخاطرة. هذه هي الصفقات التي تبني الثروات.";
+        } else if (r >= 2) {
+            ratioEl.style.color = 'var(--success)';
+            recommendation = "✅ **صفقة جيدة.** المعيار العالمي للمحترفين هو 2:1 على الأقل. استمر.";
+        } else if (r >= 1) {
+            ratioEl.style.color = '#fff';
+            recommendation = "⚠️ **مقبولة ولكن خطرة.** العائد يساوي المخاطرة. تحتاج لنسبة نجاح عالية (Win Rate > 60%) لتكون رابحاً.";
+        } else {
+            ratioEl.style.color = 'var(--danger)';
+            recommendation = "⛔ **لا أنصح بها.** المخاطرة أكبر من العائد! الأفضل البحث عن فرصة أخرى.";
+        }
+
     } else {
         ratioEl.innerText = '0 : 0';
         ratioEl.style.color = '#fff';
+        recommendation = "💡 أدخل سعر وقف الخسارة والهدف لحساب نسبة المخاطرة.";
+    }
+
+    // Update Message Box
+    if (recommendation) {
+        msgBox.style.display = 'block';
+        msgBox.innerHTML = recommendation;
     }
 
     // Position Sizing
     if (riskAmount > 0 && risk > 0) {
-        // RiskPerShare = |Entry - Stop|
-        // MaxShares = RiskAmount / RiskPerShare
         const maxQty = Math.floor(riskAmount / risk);
         qtyEl.innerText = maxQty.toLocaleString();
     } else {
         qtyEl.innerText = '-';
+    }
+
+    // --- VISUALIZER LOGIC ---
+    if (barProfit && barLoss) {
+        if (target > 0 && stop > 0) {
+            const upside = Math.abs(target - entry);
+            const downside = Math.abs(entry - stop);
+            const total = upside + downside;
+
+            const profitWidth = (upside / total) * 100;
+            const lossWidth = (downside / total) * 100;
+
+            barProfit.style.width = `${profitWidth}%`;
+            barLoss.style.width = `${lossWidth}%`;
+
+            if (labelProfit) labelProfit.textContent = target.toFixed(2);
+            if (labelLoss) labelLoss.textContent = stop.toFixed(2);
+        } else {
+            barProfit.style.width = '0%';
+            barLoss.style.width = '0%';
+        }
     }
 };
 
@@ -2921,3 +3002,312 @@ window.selectBroker = (broker, el) => {
 
 // Ensure Risk Visualizer Updates on Load/Input
 // (Calculated inside calcRR which is triggered by oninput)
+
+
+
+window.calcPivots = () => {
+    const H = parseFloat(document.getElementById('piv-high').value);
+    const L = parseFloat(document.getElementById('piv-low').value);
+    const C = parseFloat(document.getElementById('piv-close').value);
+
+    const resBox = document.getElementById('piv-results');
+    resBox.innerHTML = '';
+
+    if (isNaN(H) || isNaN(L) || isNaN(C)) return;
+
+    // Classic Calculation
+    const P = (H + L + C) / 3;
+
+    const R1 = (2 * P) - L;
+    const S1 = (2 * P) - H;
+
+    const R2 = P + (H - L);
+    const S2 = P - (H - L);
+
+    const R3 = H + 2 * (P - L);
+    const S3 = L - 2 * (H - P);
+
+    // Render nicely
+    const Row = (lbl, val, color) => `
+        <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid rgba(255,255,255,0.05)">
+            <span style="color:${color}; font-weight:bold">${lbl}</span>
+            <span style="font-family:'Inter'; font-weight:bold">${val.toFixed(2)}</span>
+        </div>`;
+
+    let html = `<div class="glass-card" style="padding:10px; background:rgba(0,0,0,0.2)">`;
+
+    html += Row('R3', R3, 'var(--danger)');
+    html += Row('R2', R2, 'var(--danger)');
+    html += Row('R1', R1, 'var(--danger)');
+
+    html += `<div style="text-align:center; padding:10px; background:rgba(255,255,255,0.05); margin:5px 0; border-radius:8px">
+                <span style="display:block; font-size:0.7rem; color:#aaa">نقطة الارتكاز (Pivot)</span>
+                <strong style="font-size:1.2rem; color: #fff">${P.toFixed(2)}</strong>
+             </div>`;
+
+    html += Row('S1', S1, 'var(--success)');
+    html += Row('S2', S2, 'var(--success)');
+    html += Row('S3', S3, 'var(--success)');
+
+    html += `</div>`;
+
+    resBox.innerHTML = html;
+};
+
+
+// ==========================================
+//          LEVELS CALC (FIB & PIVOTS)
+// ==========================================
+
+window.switchLevelType = (type, btn) => {
+    document.querySelectorAll('#calc-levels .broker-option').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+
+    if (type === 'fib') {
+        document.getElementById('lvl-fib-sec').classList.remove('hidden');
+        document.getElementById('lvl-pivot-sec').classList.add('hidden');
+    } else {
+        document.getElementById('lvl-fib-sec').classList.add('hidden');
+        document.getElementById('lvl-pivot-sec').classList.remove('hidden');
+    }
+};
+
+window.calcFib = () => {
+    const high = parseFloat(document.getElementById('fib-high').value);
+    const low = parseFloat(document.getElementById('fib-low').value);
+    const trend = document.getElementById('fib-trend').value;
+
+    const resBox = document.getElementById('fib-results');
+    resBox.innerHTML = '';
+
+    if (isNaN(high) || isNaN(low)) return;
+
+    const diff = high - low;
+    if (diff <= 0 && trend === 'UP') return;
+
+    // Description Mapper
+    const getDesc = (rate) => {
+        if (rate === 0.236) return "تصحيح ضعيف (استمرار قوي)";
+        if (rate === 0.382) return "أول دعم حقيقي (شراء مضاربي)";
+        if (rate === 0.500) return "منطقة التوازن (شائع جداً)";
+        if (rate === 0.618) return "👑 النسبة الذهبية (أفضل منطقة شراء)";
+        if (rate === 0.786) return "آخر أمل قبل كسر القاع";
+        if (rate === 1.618) return "🚀 الهدف الامتدادي";
+        return "";
+    };
+
+    const levels = [
+        { r: 0.236, lbl: '23.6%' },
+        { r: 0.382, lbl: '38.2%' },
+        { r: 0.500, lbl: '50.0%' },
+        { r: 0.618, lbl: '61.8%' },
+        { r: 0.786, lbl: '78.6%' },
+        { r: 1.618, lbl: '161.8% (Ext)' }
+    ];
+
+    let html = '<div class="glass-card compact-card" style="padding:0; overflow:hidden">';
+
+    levels.forEach((l, index) => {
+        let val = 0;
+        let typeClass = '';
+        const desc = getDesc(l.r);
+
+        if (trend === 'UP') {
+            val = high - (diff * l.r);
+            typeClass = 'text-green';
+        } else {
+            val = low + (diff * l.r);
+            typeClass = 'text-danger';
+        }
+
+        const isGolden = l.r === 0.618;
+        const bgStyle = isGolden ? 'background:rgba(255,215,0,0.15);' : (index % 2 === 0 ? 'background:rgba(255,255,255,0.02)' : '');
+        const borderStyle = isGolden ? 'border-right: 4px solid var(--gold);' : '';
+
+        html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border-bottom:1px solid rgba(255,255,255,0.05); ${bgStyle}; ${borderStyle}">
+            <div style="display:flex; flex-direction:column;">
+                <span class="g-label" style="font-size:0.9rem; color:#fff">${l.lbl}</span>
+                <span style="font-size:0.7rem; color:#888; margin-top:2px">${desc}</span>
+            </div>
+            <strong class="g-value ${typeClass}" style="font-size:1.2rem">${val.toFixed(2)}</strong>
+        </div>`;
+    });
+    html += '</div>';
+    resBox.innerHTML = html;
+};
+
+
+// ==========================================
+//          LESSONS & STRATEGY WIZARD
+// ==========================================
+
+let currentWizStep = 1;
+const totalWizSteps = 4;
+let selectedStrategy = 'DEFENSIVE'; // Default
+
+window.changeStep = (n) => {
+    // Validate Step 1
+    if (currentWizStep === 1 && n === 1) {
+        const failScenario = document.getElementById('lz-fail-scenario').value;
+        if (failScenario.length < 5) {
+            window.showToast("👻 لا تخدع نفسك! واجه الجانب المظلم واكتب سيناريو الفشل.", "error");
+            return;
+        }
+    }
+
+    // Validate Step 3
+    if (currentWizStep === 3 && n === 1) {
+        const alloc = parseFloat(document.getElementById('lz-alloc-amount').value) || 0;
+        if (alloc <= 0) {
+            window.showToast("💰 حدد المبلغ المخصص للصفقة.", "error");
+            return;
+        }
+        // Auto-calc on enter step 4
+        setTimeout(window.calcStrategyResults, 100);
+    }
+
+    document.getElementById(`step-${currentWizStep}`).classList.remove('active');
+    currentWizStep += n;
+
+    // Bounds check
+    if (currentWizStep < 1) currentWizStep = 1;
+    if (currentWizStep > totalWizSteps) currentWizStep = totalWizSteps;
+
+    document.getElementById(`step-${currentWizStep}`).classList.add('active');
+
+    // Update Progress
+    const progress = (currentWizStep / totalWizSteps) * 100;
+    document.getElementById('wiz-progress').style.width = `${progress}%`;
+
+    // Buttons
+    document.getElementById('wiz-prev').classList.toggle('hidden', currentWizStep === 1);
+    document.getElementById('wiz-next').classList.toggle('hidden', currentWizStep === totalWizSteps);
+    document.getElementById('wiz-save').classList.toggle('hidden', currentWizStep !== totalWizSteps);
+};
+
+window.checkAllocation = () => {
+    const total = parseFloat(document.getElementById('lz-portfolio-size').value) || 0;
+    const alloc = parseFloat(document.getElementById('lz-alloc-amount').value) || 0;
+    const warning = document.getElementById('alloc-warning');
+
+    if (total > 0 && alloc > 0) {
+        const percent = (alloc / total) * 100;
+        if (percent > 15) {
+            warning.classList.remove('hidden');
+        } else {
+            warning.classList.add('hidden');
+        }
+    }
+};
+
+window.setStrategy = (type) => {
+    selectedStrategy = type;
+    document.querySelectorAll('#step-4 .seg-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.textContent.includes(type === 'DEFENSIVE' ? 'دفاعية' : (type === 'BALANCED' ? 'متوازنة' : 'هجومية'))) {
+            b.classList.add('active');
+        }
+    });
+    window.calcStrategyResults();
+};
+
+window.calcStrategyResults = () => {
+    const amount = parseFloat(document.getElementById('lz-alloc-amount').value) || 0;
+
+    let splits = [];
+    if (selectedStrategy === 'DEFENSIVE') splits = [0.20, 0.30, 0.50];
+    else if (selectedStrategy === 'BALANCED') splits = [0.30, 0.30, 0.40];
+    else splits = [0.50, 0.50]; // Aggressive
+
+    const labels = [
+        "دفعة أولى (جس نبض / Market)",
+        "دفعة ثانية (تأكيد الاتجاه / Breakout)",
+        "دفعة ثالثة (دعم رئيسي / Panic)"
+    ];
+
+    if (selectedStrategy === 'AGGRESSIVE') {
+        labels[0] = "دفعة أولى (Market)";
+        labels[1] = "دفعة تعزيز (Support)";
+    }
+
+    let html = '';
+    splits.forEach((ratio, idx) => {
+        const val = amount * ratio;
+        html += `
+        <div class="strat-row">
+            <div>
+                <span style="display:block; font-size:0.85rem; color:#aaa; margin-bottom:4px">${labels[idx]}</span>
+                <span class="strat-badge badge-${selectedStrategy.toLowerCase()}">${(ratio * 100)}%</span>
+            </div>
+            <strong style="font-size:1.1rem">${window.formatMoney(val)}</strong>
+        </div>`;
+    });
+
+    document.getElementById('strategy-breakdown').innerHTML = html;
+};
+
+window.saveStrategy = async () => {
+    if (!auth.currentUser) return window.showToast("يرجى تسجيل الدخول لحفظ الاستراتيجية", "error");
+
+    const failScenario = document.getElementById('lz-fail-scenario').value;
+    const worstLoss = document.getElementById('lz-worst-loss').value;
+    const reasons = Array.from(document.querySelectorAll('.lz-reason:checked')).map(c => c.value);
+    const amount = parseFloat(document.getElementById('lz-alloc-amount').value) || 0;
+
+    const strategyData = {
+        date: new Date().toISOString(),
+        failScenario,
+        worstLoss,
+        reasons,
+        amount,
+        strategyType: selectedStrategy,
+        status: 'PENDING'
+    };
+
+    try {
+        await addDoc(collection(db, 'users', auth.currentUser.uid, 'strategies'), strategyData);
+        window.showToast("تم حفظ خطة التداول بنجاح! 🧠", "success");
+        window.changeStep(-3); // Reset to step 1
+        window.loadStrategies();
+    } catch (e) {
+        console.error(e);
+        window.showToast("فشل الحفظ", "error");
+    }
+};
+
+window.loadStrategies = async () => {
+    if (!auth.currentUser) return;
+    const list = document.getElementById('strategy-history-list');
+
+    const q = query(collection(db, 'users', auth.currentUser.uid, 'strategies'), orderBy('date', 'desc'), limit(10));
+    try {
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+            list.innerHTML = '<div class="empty-state"><p>لا توجد خطط محفوظة</p></div>';
+            return;
+        }
+
+        list.innerHTML = '';
+        snap.forEach(d => {
+            const data = d.data();
+            const date = new Date(data.date).toLocaleDateString('ar-EG');
+            const badgeClass = data.strategyType === 'DEFENSIVE' ? 'badge-defensive' : (data.strategyType === 'BALANCED' ? 'badge-balanced' : 'badge-aggressive');
+
+            list.innerHTML += `
+            <div class="glass-card compact-card" style="margin-bottom:10px; border-right:4px solid var(--primary)">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px">
+                    <span style="font-size:0.8rem; color:#888">${date}</span>
+                    <span class="strat-badge ${badgeClass}">${data.strategyType}</span>
+                </div>
+                <div style="font-size:0.9rem; margin-bottom:5px">
+                    <strong>سيناريو الفشل:</strong> ${data.failScenario.substring(0, 50)}...
+                </div>
+                <div style="font-size:0.85rem; color:#aaa">
+                    المبلغ: ${window.formatMoney(data.amount)} | الأسباب: ${data.reasons.length}
+                </div>
+            </div>`;
+        });
+    } catch (e) { console.log(e); }
+};

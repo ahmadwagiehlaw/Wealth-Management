@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>My Wealth</title>
-    <link rel="stylesheet" href="style.css">
+    <title>محفظتي (My Wealth)</title>
+    <link rel="stylesheet" href="style.css?v=11">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;600;800&display=swap"
         rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#121212">
@@ -25,13 +25,11 @@
     <!-- نظام الإشعارات -->
     <div id="toast-container"></div>
 
-    <!-- Global Ticker Removed from Body -->
-
     <section id="auth-section" class="view-section">
         <div class="container"
             style="height:80vh; display:flex; flex-direction:column; justify-content:center; text-align:center;">
             <i class="fa-solid fa-layer-group" style="font-size:3.5rem; color:var(--primary); margin-bottom:20px;"></i>
-            <h1 style="margin:0 0 10px; font-size:1.8rem">My Wealth</h1>
+            <h1 style="margin:0 0 10px; font-size:1.8rem">محفظتي</h1>
             <p style="color:#888; margin-bottom:40px; font-size:0.9rem">إدارة الأصول ومحاكاة السوق</p>
 
             <input type="email" id="login-email" placeholder="البريد الإلكتروني">
@@ -42,7 +40,7 @@
 
     <section id="dashboard-section" class="view-section hidden">
         <div class="container">
-            <!-- Market Ticker (Moved to Top) -->
+            <!-- Market Ticker -->
             <div class="market-ticker-inline glass-card-nav" id="ticker-bar"
                 style="margin-bottom: 15px; padding: 8px 15px; display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size:0.8rem; color:#aaa;">
@@ -56,7 +54,7 @@
                 </button>
             </div>
 
-            <!-- بطاقة الثروة الرئيسية مع Lottie -->
+            <!-- بطاقة الثروة الرئيسية -->
             <div class="glass-card main-wealth-card">
                 <div class="wealth-header">
                     <div class="wealth-text">
@@ -67,7 +65,7 @@
                         </div>
                     </div>
                     <div id="lottie-wealth" style="width: 120px; height: 120px;"></div>
-                </div> <!-- Close wealth-header -->
+                </div>
 
                 <div class="wealth-stats-row">
                     <div class="w-stat">
@@ -86,9 +84,7 @@
                         <span class="ws-label">متوسط العائد</span>
                     </div>
                 </div>
-            </div> <!-- Close main-wealth-card -->
-
-            <!-- Market Ticker Moved Up (Line 76 removed) -->
+            </div>
 
             <div class="section-header">
                 <h3>المحافظ</h3>
@@ -98,6 +94,7 @@
             </div>
 
             <div id="portfolios-container"></div>
+        </div>
     </section>
 
     <!-- Create Portfolio Modal -->
@@ -139,6 +136,8 @@
     <div id="loading-overlay" class="hidden">
         <div class="spinner"></div>
     </div>
+
+    <!-- DETAILS SECTION -->
     <section id="details-section" class="view-section hidden">
         <div class="container">
             <!-- Header & Actions -->
@@ -157,7 +156,7 @@
                 </button>
             </div>
 
-            <!-- New Hero Analytics Card -->
+            <!-- Hero Analytics Card -->
             <div class="hero-analytics-card">
                 <div class="hero-main-value">
                     <span class="currency-label" id="d-p-currency">EGP</span>
@@ -196,7 +195,7 @@
                     </div>
                 </div>
 
-                <!-- Secondary Stats Row (Deposits / Withdrawals) -->
+                <!-- Secondary Stats Row -->
                 <div class="hero-stats-row secondary-stats">
                     <div class="hero-stat-item compact">
                         <span class="stat-label-tiny">إجمالي الإيداع</span>
@@ -215,7 +214,6 @@
                 </div>
             </div>
 
-            <!-- Background decoration -->
             <div class="hero-bg-glow"></div>
         </div>
 
@@ -227,9 +225,9 @@
                     القيمة السوقية
                 </h3>
                 <div class="chart-filters">
-                    <button class="filter-btn active" onclick="updateChartFilter('1W')">1W</button>
-                    <button class="filter-btn" onclick="updateChartFilter('1M')">1M</button>
-                    <button class="filter-btn" onclick="updateChartFilter('1Y')">1Y</button>
+                    <button class="filter-btn active" onclick="updateChartFilter('1W')">أسبوع</button>
+                    <button class="filter-btn" onclick="updateChartFilter('1M')">شهر</button>
+                    <button class="filter-btn" onclick="updateChartFilter('1Y')">سنة</button>
                 </div>
             </div>
             <div class="chart-wrapper">
@@ -262,14 +260,13 @@
                 </table>
             </div>
 
-            <!-- Empty State Placeholder -->
             <div id="history-empty-state" class="empty-state hidden">
                 <i class="fa-solid fa-clipboard-list"></i>
                 <p>لا يوجد سجلات بعد. ابدأ بتحديث رصيد المحفظة.</p>
             </div>
         </div>
 
-        <!-- Update Balance Modal with Cash Flow -->
+        <!-- Update Balance Modal -->
         <dialog id="update-balance-modal" class="modal">
             <div class="modal-content glass-card">
                 <button onclick="document.getElementById('update-balance-modal').close()"
@@ -318,11 +315,9 @@
                 </div>
             </div>
         </dialog>
-        </div>
     </section>
 
-    <!-- Old Journal Section Removed -->
-
+    <!-- CALCULATOR SECTION -->
     <section id="calculator-section" class="view-section hidden">
         <div class="container">
             <div class="tools-header">
@@ -339,6 +334,10 @@
                         <span class="sc-icon"><i class="fa-solid fa-globe"></i></span>
                         <span class="sc-label">شامل</span>
                     </button>
+                    <button class="sc-btn" onclick="window.switchCalcTab('levels', this)">
+                        <span class="sc-icon"><i class="fa-solid fa-layer-group"></i></span>
+                        <span class="sc-label">مستويات</span>
+                    </button>
                     <button class="sc-btn" onclick="window.switchCalcTab('fees', this)">
                         <span class="sc-icon"><i class="fa-solid fa-receipt"></i></span>
                         <span class="sc-label">عمولات</span>
@@ -351,6 +350,68 @@
                         <span class="sc-icon"><i class="fa-solid fa-shield-halved"></i></span>
                         <span class="sc-label">مخاطرة</span>
                     </button>
+                </div>
+            </div>
+
+            <!-- LEVELS TAB -->
+            <div id="calc-levels" class="calc-tab-content">
+                <div class="glass-card tool-card">
+                    <div class="broker-selector" style="margin-bottom:15px">
+                        <div class="broker-option selected" onclick="window.switchLevelType('fib', this)">
+                            فيبوناتشي
+                        </div>
+                        <div class="broker-option" onclick="window.switchLevelType('pivot', this)">
+                            الدعوم (Pivots)
+                        </div>
+                    </div>
+
+                    <!-- FIBONACCI -->
+                    <div id="lvl-fib-sec">
+                        <p class="section-subtitle" style="margin-bottom:15px; font-size:0.8rem">
+                            أدخل قمة وقاع <strong>الموجة الحالية</strong> التي تريد تحليلها.
+                        </p>
+                        <div class="compact-grid">
+                            <div class="input-group-modern success-theme">
+                                <label>القمة (High)</label>
+                                <input type="number" id="fib-high" placeholder="أعلى سعر" oninput="window.calcFib()">
+                            </div>
+                            <div class="input-group-modern danger-theme">
+                                <label>القاع (Low)</label>
+                                <input type="number" id="fib-low" placeholder="أقل سعر" oninput="window.calcFib()">
+                            </div>
+                        </div>
+                        <div class="input-group-modern" style="margin-top:10px;">
+                            <label>اتجاه الموجة:</label>
+                            <select id="fib-trend" class="modern-input" onchange="window.calcFib()">
+                                <option value="UP">صاعدة (تصحيح لأسفل)</option>
+                                <option value="DOWN">هابطة (ارتداد لأعلى)</option>
+                            </select>
+                        </div>
+                        <div id="fib-results" class="hidden-fade-in" style="margin-top:20px"></div>
+                    </div>
+
+                    <!-- PIVOT POINTS -->
+                    <div id="lvl-pivot-sec" class="hidden">
+                        <p class="section-subtitle" style="margin-bottom:15px; font-size:0.8rem">
+                            أدخل بيانات شمعة <strong>اليوم السابق</strong> لحساب مستويات اليوم.
+                        </p>
+                        <div class="compact-grid">
+                            <div class="input-group-modern">
+                                <label>الأعلى (High)</label>
+                                <input type="number" id="piv-high" placeholder="هاي أمس" oninput="window.calcPivots()">
+                            </div>
+                            <div class="input-group-modern">
+                                <label>الأدنى (Low)</label>
+                                <input type="number" id="piv-low" placeholder="لو أمس" oninput="window.calcPivots()">
+                            </div>
+                            <div class="input-group-modern">
+                                <label>الإغلاق (Close)</label>
+                                <input type="number" id="piv-close" placeholder="إغلاق أمس"
+                                    oninput="window.calcPivots()">
+                            </div>
+                        </div>
+                        <div id="piv-results" class="hidden-fade-in" style="margin-top:20px"></div>
+                    </div>
                 </div>
             </div>
 
@@ -378,12 +439,9 @@
                                 <strong id="g-mkt-val" class="g-value">0.00</strong>
                             </div>
                         </div>
-
                         <div class="divider-line"></div>
                         <h4 class="mini-header">التوزيع حسب المحفظة</h4>
-                        <div id="global-breakdown-list" class="breakdown-list">
-                            <!-- Populated dynamically -->
-                        </div>
+                        <div id="global-breakdown-list" class="breakdown-list"></div>
                     </div>
 
                     <div id="global-empty" class="empty-placeholder">
@@ -406,7 +464,6 @@
                             <i class="fa-solid fa-building-columns"></i> تقليدي
                         </div>
                     </div>
-
                     <div class="compact-grid">
                         <div class="input-group-modern">
                             <label>سعر الشراء</label>
@@ -417,12 +474,10 @@
                             <input type="number" id="c-sell" placeholder="0.00" oninput="window.calcCommission()">
                         </div>
                     </div>
-
                     <div class="input-group-modern" style="margin-top: 10px;">
                         <label>الكمية</label>
                         <input type="number" id="c-qty" placeholder="عدد الأسهم" oninput="window.calcCommission()">
                     </div>
-
                     <div class="result-display-card">
                         <span class="rd-label">الربح الصافي</span>
                         <h2 id="c-result" class="rd-value">0.00</h2>
@@ -445,11 +500,6 @@
                             <input type="number" id="avg-curr-price" placeholder="0.00">
                         </div>
                     </div>
-
-                    <div class="connection-line">
-                        <i class="fa-solid fa-plus-circle"></i>
-                    </div>
-
                     <h4 class="section-label">الشراء الجديد</h4>
                     <div class="compact-grid">
                         <div class="input-group-modern">
@@ -461,11 +511,7 @@
                             <input type="number" id="avg-new-price" placeholder="0.00">
                         </div>
                     </div>
-
-                    <button class="btn-action-glow" onclick="window.calcAverage()">
-                        احسب المتوسط الجديد
-                    </button>
-
+                    <button class="btn-action-glow" onclick="window.calcAverage()">احسب المتوسط الجديد</button>
                     <div class="result-display-card gold-theme" style="margin-top: 20px;">
                         <span class="rd-label">المتوسط الجديد</span>
                         <h2 id="avg-result" class="rd-value">0.00</h2>
@@ -480,13 +526,11 @@
                         <label>المبلغ المخاطر به ($) <span class="optional-badge">اختياري</span></label>
                         <input type="number" id="rr-risk-amount" placeholder="مثلاً 100" oninput="window.calcRR()">
                     </div>
-
                     <div class="input-group-modern" style="margin-top: 15px;">
                         <label>سعر الدخول</label>
                         <input type="number" id="rr-entry" placeholder="0.00" oninput="window.calcRR()"
                             class="highlight-input">
                     </div>
-
                     <div class="compact-grid" style="margin-top: 15px;">
                         <div class="input-group-modern success-theme">
                             <label>الهدف (TP)</label>
@@ -497,8 +541,7 @@
                             <input type="number" id="rr-stop" placeholder="0.00" oninput="window.calcRR()">
                         </div>
                     </div>
-
-                    <!-- Risk Visualizer -->
+                    <!-- Visualizer -->
                     <div class="risk-visualizer-container">
                         <div class="rr-bar-wrapper">
                             <div id="rr-bar-loss" class="rr-bar loss"></div>
@@ -511,7 +554,6 @@
                             <span id="label-profit" class="text-green">0%</span>
                         </div>
                     </div>
-
                     <div class="compact-grid" style="margin-top: 15px;">
                         <div class="result-display-card compact">
                             <span class="rd-label">R:R Ratio</span>
@@ -524,24 +566,134 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 
-    <section id="settings-section" class="view-section hidden">
-        <div class="container">
-            <h3>الإعدادات</h3>
-            <div class="glass-card">
-                <button class="btn-primary" onclick="window.exportBackup()"
-                    style="margin-bottom:10px; background:#2c2c2e">
-                    <i class="fa-solid fa-download"></i> تصدير البيانات (JSON)
-                </button>
-                <button class="btn-primary" onclick="document.getElementById('backup-upload').click()"
-                    style="margin-bottom:10px; background:#2c2c2e">
-                    <i class="fa-solid fa-upload"></i> استعادة نسخة
-                </button>
+    <!-- LESSONS SECTION (Trading Academy) -->
+    <section id="lessons-section" class="view-section hidden">
+        <header class="app-header" style="justify-content: space-between; direction: ltr;">
+            <button class="btn-icon" onclick="window.setView('dashboard')"
+                style="background:rgba(255,255,255,0.1); width:40px; height:40px; border-radius:12px;">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h1 class="logo-text" style="font-size:1.5rem; order:2;">أكاديمية التداول <i
+                    class="fa-solid fa-graduation-cap"></i></h1>
+        </header>
+
+        <div class="content-container">
+            <!-- Strategy Wizard -->
+            <div id="strategy-wizard" class="glass-card full-width" style="margin-top:10px">
+                <div class="wizard-header">
+                    <h2 class="section-title">فتح مركز جديد</h2>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="wiz-progress" style="width: 25%"></div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Risk -->
+                <div class="wizard-step active" id="step-1">
+                    <h3 class="step-title">👻 الجانب المظلم</h3>
+                    <p class="step-desc">قبل أن تفكر في الربح، فكر: لماذا قد تفشل هذه الصفقة؟</p>
+                    <div class="input-group">
+                        <label>سيناريو الفشل (Pre-Mortem)</label>
+                        <textarea id="lz-fail-scenario" class="main-input" rows="2"
+                            placeholder="مثلاً: كسر وهمي، أخبار سلبية، تصحيح عام للسوق..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>أسوأ خسارة محتملة (نفسياً)</label>
+                        <input type="text" id="lz-worst-loss" class="main-input"
+                            placeholder="هل تتحمل خسارة 10% مثلاً؟">
+                    </div>
+                </div>
+
+                <!-- Step 2: Technical -->
+                <div class="wizard-step" id="step-2">
+                    <h3 class="step-title">📐 الإعداد الفني</h3>
+                    <p class="step-desc">لماذا تدخل الآن تحديداً؟</p>
+                    <div class="input-group">
+                        <label>أسباب الدخول (اختر ما ينطبق)</label>
+                        <div class="checkbox-group">
+                            <label class="cb-container">
+                                <input type="checkbox" value="BREAKOUT" class="lz-reason"> اختراق مقاومة (Breakout)
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="cb-container">
+                                <input type="checkbox" value="SUPPORT" class="lz-reason"> ارتداد من دعم (Support)
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="cb-container">
+                                <input type="checkbox" value="INDICATOR" class="lz-reason"> إشارة مؤشر (RSI/MACD)
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="cb-container">
+                                <input type="checkbox" value="FUNDAMENTAL" class="lz-reason"> مالي/أساسي (News/Earnings)
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="two-col-grid">
+                        <div class="input-group">
+                            <label>دعم 1 (قريب)</label>
+                            <input type="number" id="lz-support1" class="main-input" placeholder="0.00">
+                        </div>
+                        <div class="input-group">
+                            <label>دعم 2 (قوي)</label>
+                            <input type="number" id="lz-support2" class="main-input" placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Allocation -->
+                <div class="wizard-step" id="step-3">
+                    <h3 class="step-title">💰 إدارة المحفظة</h3>
+                    <p class="step-desc">لا تضع البيض كله في سلة واحدة.</p>
+                    <div class="input-group">
+                        <label>إجمالي المحفظة الحالية</label>
+                        <input type="number" id="lz-portfolio-size" class="main-input" placeholder="0.00">
+                    </div>
+                    <div class="input-group">
+                        <label>المبلغ المخصص للصفقة</label>
+                        <input type="number" id="lz-alloc-amount" class="main-input" placeholder="0.00"
+                            oninput="window.checkAllocation()">
+                    </div>
+                    <div id="alloc-warning" class="warning-box hidden">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>تحذير: المبلغ يتجاوز 15% من المحفظة! تأكد أنك مرتاح لهذه المخاطرة.</span>
+                    </div>
+                </div>
+
+                <!-- Step 4: Execution Plan -->
+                <div class="wizard-step" id="step-4">
+                    <h3 class="step-title">🚀 خطة الدخول</h3>
+                    <p class="step-desc">كيف ستنفذ الصفقة؟</p>
+                    <div class="input-group">
+                        <label>نوع الاستراتيجية</label>
+                        <div class="segmented-control">
+                            <button class="seg-btn active" onclick="window.setStrategy('DEFENSIVE')">دفاعية 🛡️</button>
+                            <button class="seg-btn" onclick="window.setStrategy('BALANCED')">متوازنة ⚖️</button>
+                            <button class="seg-btn" onclick="window.setStrategy('AGGRESSIVE')">هجومية ⚔️</button>
+                        </div>
+                    </div>
+                    <div id="strategy-breakdown" class="strategy-results"></div>
+                </div>
+
+                <div class="wizard-nav">
+                    <button id="wiz-prev" class="btn-secondary hidden" onclick="window.changeStep(-1)">السابق</button>
+                    <button id="wiz-next" class="btn-primary" onclick="window.changeStep(1)">التالي</button>
+                    <button id="wiz-save" class="btn-success hidden" onclick="window.saveStrategy()">حفظ الخطة
+                        ✅</button>
+                </div>
             </div>
-            <button class="btn-primary" style="background:var(--danger)" id="logout-btn-settings">تسجيل الخروج</button>
+
+            <!-- History -->
+            <div class="glass-card full-width" style="margin-top:20px">
+                <h3 class="section-title" style="font-size:1.2rem; margin-bottom:15px">سجل الاستراتيجيات</h3>
+                <div id="strategy-history-list" class="transaction-list">
+                    <div class="empty-state">
+                        <p>لا توجد خطط محفوظة بعد</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -549,24 +701,22 @@
     <section id="journal-section" class="view-section hidden">
         <div class="container">
             <div class="journal-header">
-                <div>
-                    <h2 class="section-title">Trading Journal</h2>
-                    <p class="section-subtitle">إحصائيات & نفسية التداول</p>
+                <div class="journal-title-box">
+                    <h2>سجل الصفقات</h2>
+                    <p>إدارة صفقاتك وتحليل الأداء</p>
                 </div>
-                <!-- "Start Campaign" Button -->
-                <button class="btn-add-circle" onclick="window.openNewCenterModal()">
+                <button class="btn-add-journal" onclick="window.openNewCenterModal()">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
 
-            <!-- Stats Overview -->
             <div class="journal-stats-row">
                 <div class="j-stat-card">
                     <span class="j-label">نسبة النجاح</span>
                     <strong id="j-winrate">--%</strong>
                 </div>
                 <div class="j-stat-card">
-                    <span class="j-label">العائد للمخاطرة</span>
+                    <span class="j-label">العائد / المخاطرة</span>
                     <strong id="j-avg-rr">--</strong>
                 </div>
                 <div class="j-stat-card">
@@ -581,16 +731,14 @@
                 <button class="j-filter" data-filter="LOSS" onclick="window.setJournalFilter('LOSS')">خاسرة</button>
                 <button class="j-filter" data-filter="OPEN" onclick="window.setJournalFilter('OPEN')">مفتوحة</button>
             </div>
-            <!-- LEAKAGE HEATMAP (The Genius Addition) -->
+
             <div class="glass-card leakage-card">
                 <div class="leakage-header"
-                    onclick="document.getElementById('leakage-list').classList.toggle('hidden'); this.querySelector('.fa-chevron-down').classList.toggle('rotate-180');"
-                    style="cursor:pointer">
+                    onclick="document.getElementById('leakage-list').classList.toggle('hidden')">
                     <h4><i class="fa-solid fa-fire text-danger"></i> تكلفة الأخطاء (Leakage)</h4>
-                    <i class="fa-solid fa-chevron-down transition-transform"></i>
+                    <i class="fa-solid fa-chevron-down"></i>
                 </div>
                 <div id="leakage-list" class="leakage-list hidden">
-                    <!-- Dynamic Content will be injected here -->
                     <div style="text-align:center; padding:10px; color:#888; font-size:0.8rem">
                         حساب التكلفة يتطلب إغلاق صفقات خاسرة محددة كأخطاء
                     </div>
@@ -598,10 +746,8 @@
             </div>
 
             <div class="section-divider"></div>
-
             <h4 style="margin-bottom:15px; color:#ccc;">المراكز المفتوحة (Active Campaigns)</h4>
             <div id="active-centers-list" class="centers-list">
-                <!-- Active Trade Centers Go Here -->
                 <div class="empty-state">
                     <i class="fa-solid fa-layer-group"></i>
                     <p>لا توجد مراكز نشطة حالياً</p>
@@ -610,7 +756,7 @@
         </div>
     </section>
 
-    <!-- NEW CENTER MODAL (The War Room) -->
+    <!-- NEW CENTER MODAL -->
     <dialog id="new-center-modal" class="modal">
         <div class="modal-content glass-card input-modal">
             <div class="modal-header">
@@ -619,9 +765,7 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-
             <input type="hidden" id="jc-edit-id">
-
             <div class="input-group">
                 <div class="compact-grid">
                     <input type="text" id="jc-asset" class="main-input" placeholder="الأصل (مثلاً GOLD, AAPL)">
@@ -630,7 +774,6 @@
                         <option value="SHORT">Short 🔴</option>
                     </select>
                 </div>
-
                 <label>الاستراتيجية / السبب (Setup)</label>
                 <select id="jc-strategy" class="main-input">
                     <option value="BREAKOUT">اختراق (Breakout)</option>
@@ -639,22 +782,19 @@
                     <option value="NEWS">خبر (News Play)</option>
                     <option value="OTHER">أخرى</option>
                 </select>
-
                 <textarea id="jc-thesis" class="main-input" rows="3"
                     placeholder="لماذا تدخل هذه الصفقة؟ (Thesis)"></textarea>
-
                 <div class="compact-grid">
                     <input type="number" id="jc-stop" class="main-input" placeholder="وقف الخسارة (Stop Loss)">
                     <input type="number" id="jc-target" class="main-input" placeholder="الهدف (Take Profit)">
                 </div>
             </div>
-
             <button id="btn-save-center" class="btn-primary w-100" onclick="window.submitNewCenter()">فتح
                 المركز</button>
         </div>
     </dialog>
 
-    <!-- ADD EXECUTION MODAL (Log Trade) -->
+    <!-- ADD EXECUTION MODAL -->
     <dialog id="add-execution-modal" class="modal">
         <div class="modal-content glass-card input-modal">
             <div class="modal-header">
@@ -665,18 +805,14 @@
             </div>
             <input type="hidden" id="exec-center-id">
             <input type="hidden" id="exec-edit-id">
-
             <div class="input-group">
-                <!-- Portfolio Selection -->
                 <div style="margin-bottom: 10px;">
                     <label style="font-size:0.8rem; color:#aaa; display:block; margin-bottom:4px;">المحفظة
                         (Portfolio)</label>
                     <select id="exec-portfolio" class="main-input">
                         <option value="NONE">بدون محفظة (Global)</option>
-                        <!-- Options populated via JS -->
                     </select>
                 </div>
-
                 <div class="compact-grid">
                     <select id="exec-type" class="main-input">
                         <optgroup label="Drying In (Dukhul)">
@@ -696,14 +832,23 @@
                     </select>
                     <input type="date" id="exec-date" class="main-input">
                 </div>
-
                 <div class="compact-grid">
                     <input type="number" id="exec-price" class="main-input" placeholder="السعر">
                     <input type="number" id="exec-qty" class="main-input" placeholder="الكمية">
                 </div>
-
+                <div class="input-group" style="margin-top:10px;">
+                    <label style="font-size:0.8rem; color:#aaa;">خطأ ارتكبته؟ (Mistake)</label>
+                    <select id="exec-mistake" class="main-input">
+                        <option value="NONE">لا يوجد (تداول سليم) ✅</option>
+                        <option value="FOMO">تسرع (FOMO) 🏃‍♂️</option>
+                        <option value="HESITATION">تردد (Hesitation) 🐢</option>
+                        <option value="REVANGE">انتقام (Revenge) 😡</option>
+                        <option value="NO_PLAN">بدون خطة 📜</option>
+                        <option value="EARLY_EXIT">خروج مبكر (Weak Hands) 🤲</option>
+                        <option value="LATE_EXIT">طمع (Held too long) 🤑</option>
+                    </select>
+                </div>
                 <hr style="border-color:rgba(255,255,255,0.1); margin:15px 0;">
-
                 <label><i class="fa-solid fa-brain text-purple"></i> الحالة النفسية (Psychology)</label>
                 <div class="tags-container">
                     <div class="tag-check">
@@ -719,158 +864,63 @@
                         <label for="tag-calm">هادئ 🧘‍♂️</label>
                     </div>
                     <div class="tag-check">
-                        <input type="checkbox" id="tag-rushed" value="RUSHED">
-                        <label for="tag-rushed">استعجال 🏃</label>
-                    </div>
-                    <div class="tag-check">
-                        <input type="checkbox" id="tag-hesitant" value="HESITANT">
-                        <label for="tag-hesitant">تردد 😬</label>
-                    </div>
-                    <div class="tag-check">
-                        <input type="checkbox" id="tag-bored" value="BORED">
-                        <label for="tag-bored">ملل 🥱</label>
-                    </div>
-                    <div class="tag-check">
                         <input type="checkbox" id="tag-confident" value="CONFIDENT">
                         <label for="tag-confident">واثق 😎</label>
                     </div>
                 </div>
-
-                <div id="mistake-section" style="margin-top:10px;">
-                    <label>هل كان خطأ؟ (Mistake Cost)</label>
-                    <select id="exec-mistake" class="main-input">
-                        <option value="NONE">لا، تنفيذ سليم ✅</option>
-
-                        <optgroup label="Psychological Errors">
-                            <option value="FOMO">FOMO (خوف فوات الفرصة)</option>
-                            <option value="REVENGE">Revenge Trading (تجارة انتقامية)</option>
-                            <option value="GAMBLING">Gambling (مقامرة بدون تحليل)</option>
-                            <option value="HESITATION">Hesitation (تردد في الدخول)</option>
-                            <option value="EARLY_EXIT">Early Exit (خروج مبكر خوفاً)</option>
-                        </optgroup>
-
-                        <optgroup label="Technical Errors">
-                            <option value="NO_STRATEGY">No Strategy (دخول عشوائي)</option>
-                            <option value="BAD_ENTRY">Bad Entry (دخول متأخر/سيء)</option>
-                            <option value="WIDE_STOP">Wide Stop (وقف خسارة كبير)</option>
-                            <option value="OVERSIZING">Oversizing (حجم صفقة كبير)</option>
-                        </optgroup>
-
-                        <optgroup label="Other Errors">
-                            <option value="FAT_FINGER">Fat Finger (خطأ كتابي)</option>
-                            <option value="NEWS_PANIC">News Panic (هلع أخبار)</option>
-                            <option value="TECH_ISSUE">Technical Issue (عطل منصة/نت)</option>
-                            <option value="BAD_ADVICE">Bad Advice (توصية فاشلة)</option>
-                        </optgroup>
-                    </select>
-                </div>
-
+                <textarea id="exec-notes" class="main-input" rows="2" placeholder="ملاحظات إضافية..."></textarea>
             </div>
-
-            <button id="btn-save-exec" class="btn-primary w-100" onclick="window.submitExecution()">تسجيل</button>
+            <button id="btn-save-exec" class="btn-primary w-100" onclick="window.submitExecution()">حفظ التنفيذ</button>
         </div>
     </dialog>
 
-    <!-- REVIEW TIMELINE MODAL (The Story) -->
-    <dialog id="review-timeline-modal" class="modal">
-        <div class="modal-content glass-card input-modal" style="max-width: 600px;">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-clock-rotate-left"></i> سجل التداولات (Timeline)</h3>
-                <button onclick="document.getElementById('review-timeline-modal').close()" class="close-modal-btn">
-                    <i class="fa-solid fa-xmark"></i>
+    <section id="settings-section" class="view-section hidden">
+        <div class="container">
+            <h3>الإعدادات</h3>
+            <div class="glass-card">
+                <button class="btn-primary" onclick="window.exportBackup()"
+                    style="margin-bottom:10px; background:#2c2c2e">
+                    <i class="fa-solid fa-download"></i> تصدير البيانات (JSON)
                 </button>
+                <button class="btn-primary" onclick="document.getElementById('backup-upload').click()"
+                    style="margin-bottom:10px; background:#2c2c2e">
+                    <i class="fa-solid fa-upload"></i> استعادة نسخة backup
+                </button>
+                <input type="file" id="backup-upload" style="display:none" onchange="window.importBackup(this)">
             </div>
-
-            <div id="timeline-container" class="timeline-container">
-                <!-- Dynamic Timeline Items -->
-                <div class="empty-state">
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p>جاري تحميل السجل...</p>
-                </div>
-            </div>
+            <button class="btn-primary" style="background:var(--danger)" id="logout-btn-settings">تسجيل الخروج</button>
         </div>
-    </dialog>
+    </section>
 
-    <nav class="glass-dock" id="main-nav">
-        <button class="nav-item active" id="nav-home"><i class="fa-solid fa-house"></i></button>
-        <button class="nav-item" id="nav-calculator"><i class="fa-solid fa-calculator"></i></button>
-        <button class="nav-item" id="nav-journal"><i class="fa-solid fa-book-open"></i></button>
-        <button class="nav-item" id="nav-settings"><i class="fa-solid fa-gear"></i></button>
+    <!-- Bottom Navigation (Reconstructed) -->
+    <nav class="bottom-nav" id="main-nav">
+        <button class="nav-item active" id="nav-home" onclick="window.setView('dashboard')">
+            <i class="fa-solid fa-house"></i>
+        </button>
+        <button class="nav-item" id="nav-calculator" onclick="window.setView('calculator')">
+            <i class="fa-solid fa-calculator"></i>
+        </button>
+        <button class="nav-item" id="nav-journal" onclick="window.setView('journal')">
+            <i class="fa-solid fa-book-journal-whills"></i>
+        </button>
+        <button class="nav-item" id="nav-lessons" onclick="window.setView('lessons')">
+            <i class="fa-solid fa-graduation-cap"></i>
+        </button>
+        <button class="nav-item" id="nav-settings" onclick="window.setView('settings')">
+            <i class="fa-solid fa-gear"></i>
+        </button>
     </nav>
 
-    <div id="modal-overlay" class="modal-overlay hidden">
-        <div class="modal-content" id="modal-box"></div>
-    </div>
-
-    <input type="file" id="backup-upload" accept=".json" style="display:none">
-    <input type="file" id="excel-upload" accept=".xlsx, .xls, .csv" style="display:none">
-
-    <!-- Edit History Modal -->
-    <dialog id="edit-history-modal" class="modal">
-        <div class="modal-content glass-card">
-            <div class="modal-header">
-                <h3>تعديل السجل</h3>
-                <button onclick="document.getElementById('edit-history-modal').close()" class="close-modal-btn">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="input-group">
-                <input type="hidden" id="edit-hist-id">
-
-                <label>القيمة المسجلة</label>
-                <input type="number" id="edit-hist-value" class="main-input" placeholder="0.00">
-
-                <label>التاريخ</label>
-                <input type="date" id="edit-hist-date" class="main-input">
-
-                <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
-
-                <label>حركة مالية (اختياري)</label>
-                <div class="cashflow-options">
-                    <label class="radio-label">
-                        <input type="radio" name="edit-cashflow-type" value="none" checked>
-                        <span>لا يوجد</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="edit-cashflow-type" value="deposit">
-                        <span>إيداع</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="edit-cashflow-type" value="withdrawal">
-                        <span>سحب</span>
-                    </label>
-                </div>
-                <input type="number" id="edit-hist-cashflow" class="main-input mt-2" placeholder="مبلغ الإيداع/السحب"
-                    style="display:none;">
-            </div>
-            <button class="btn-primary w-100" id="save-history-edit-btn">حفظ التعديلات</button>
-        </div>
-    </dialog>
-
-    <!-- Custom Confirm Modal -->
-    <dialog id="confirm-modal" class="modal">
+    <!-- PWA Install Prompt Modal -->
+    <dialog id="pwa-install-modal" class="modal">
         <div class="modal-content glass-card" style="text-align: center;">
-            <i class="fa-solid fa-triangle-exclamation warning-icon"
-                style="font-size: 3rem; color: #ffcc00; margin-bottom: 15px;"></i>
-            <h3 id="confirm-title">هل أنت متأكد؟</h3>
-            <p id="confirm-msg" style="color: #ccc; margin-bottom: 25px;">لا يمكن التراجع عن هذا الإجراء.</p>
-            <div class="modal-actions" style="display: flex; gap: 10px; justify-content: center;">
-                <button class="btn-secondary" onclick="document.getElementById('confirm-modal').close()">إلغاء</button>
-                <button class="btn-primary" id="confirm-yes-btn" style="background: var(--danger);">نعم، حذف</button>
-            </div>
-        </div>
-    </dialog>
-
-    <!-- PWA INSTALL MODAL -->
-    <dialog id="pwa-install-modal" class="modal bottom-sheet">
-        <div class="modal-content glass-card pwa-card">
-            <div class="pwa-header">
+            <div class="pwa-prompt-content">
                 <div class="pwa-icon">
                     <img src="./assets/icon-192.png" alt="App Icon"
                         onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
                 </div>
                 <div class="pwa-text">
-                    <h3>تثبيت التطبيق 📱</h3>
+                    <h3>تثبيت التطبيق 📲</h3>
                     <p>احصل على تجربة أسرع وأفضل بتثبيت التطبيق على جهازك.</p>
                 </div>
             </div>
